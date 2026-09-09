@@ -1,0 +1,30 @@
+/* Globalne style aplikacji: fonty, zmienne, reset. */
+
+:root {
+  --gold: #c6a15b;
+  --gold-dark: #a07c33;
+  --ink: #3d3428;
+  --font-display: 'Bodoni Moda', Georgia, 'Times New Roman', serif;
+  --font-body: 'Belleza', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-script: 'Pinyon Script', cursive;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: #ffffff;
+}
+
+h1,
+h2,
+h3,
+.brand-name {
+  font-family: var(--font-display);
+}
