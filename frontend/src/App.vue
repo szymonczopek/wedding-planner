@@ -18,7 +18,7 @@ const { user, isAuthenticated, logout } = useAuth()
         <RouterLink to="/register">Rejestracja</RouterLink>
       </template>
       <template v-else>
-        <span class="topnav-user">{{ user?.email }}</span>
+        <span class="topnav-user">{{ user?.name }}</span>
         <button class="topnav-logout" @click="logout">Wyloguj</button>
       </template>
     </div>

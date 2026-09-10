@@ -17,7 +17,7 @@
 
 body {
   margin: 0;
-  font-family: var(--font-body);
+  font-family: var(--font-body), serif;
   color: var(--ink);
   background: #ffffff;
 }
@@ -26,5 +26,5 @@ h1,
 h2,
 h3,
 .brand-name {
-  font-family: var(--font-display);
+  font-family: var(--font-display), serif;
 }
