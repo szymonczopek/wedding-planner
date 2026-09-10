@@ -1,12 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import { getAuthToken } from '@/api/client.js'
-import MainDesktopView from "../views/MainDesktopView.vue";
+import AppLayout from '@/layouts/AppLayout.vue'
+import MainDesktopView from '@/views/MainDesktopView.vue'
+import GuestsView from '@/views/GuestsView.vue'
+import TablesView from "../views/TablesView.vue";
 
 const routes = [
-  { path: '/', component: MainDesktopView, meta: { requiresAuth: true } },
+  {
+    path: '/',
+    component: AppLayout,
+    meta: { requiresAuth: true },
+    children: [
+      { path: '', component: MainDesktopView },
+      { path: 'guests', component: GuestsView },
+      { path: 'tables', component: TablesView }
+    ],
+  },
   { path: '/login', component: LoginView, meta: { guestOnly: true } },
   { path: '/register', component: RegisterView, meta: { guestOnly: true } },
 ]

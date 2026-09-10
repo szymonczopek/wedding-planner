@@ -1,8 +1,14 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import Card from 'primevue/card'
+import FloatLabel from 'primevue/floatlabel'
+import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
+import Button from 'primevue/button'
+import Message from 'primevue/message'
+import BrandBar from '@/components/BrandBar.vue'
 import { useAuth } from '../composables/useAuth.js'
-import '../assets/auth.css'
 
 const { register, isLoading } = useAuth()
 
@@ -23,38 +29,128 @@ async function onSubmit() {
 </script>
 
 <template>
-  <div class="auth-page">
-    <div class="auth-card">
-      <h1 class="auth-title">Rejestracja</h1>
-      <p class="auth-subtitle">Załóż konto i zacznij planować swój ślub</p>
-      <form class="auth-form" @submit.prevent="onSubmit">
-        <label class="auth-field">
-          Nazwa użytkownika
-          <input v-model="name" type="text" required autocomplete="username" placeholder="np. Anna" />
-          <small class="field-error" v-if="errors.name">{{ errors.name[0] }}</small>
-        </label>
-        <label class="auth-field">
-          Email
-          <input v-model="email" type="email" required autocomplete="email" placeholder="np. anna@przyklad.pl" />
-          <small class="field-error" v-if="errors.email">{{ errors.email[0] }}</small>
-        </label>
-        <label class="auth-field">
-          Hasło
-          <input v-model="password" type="password" required autocomplete="new-password" placeholder="min. 8 znaków" />
-          <small class="field-error" v-if="errors.password">{{ errors.password[0] }}</small>
-        </label>
-        <label class="auth-field">
-          Powtórz hasło
-          <input v-model="passwordConfirmation" type="password" required autocomplete="new-password" placeholder="••••••••" />
-        </label>
-        <button class="auth-button" type="submit" :disabled="isLoading">
-          {{ isLoading ? 'Rejestracja…' : 'Załóż konto' }}
-        </button>
-      </form>
-      <p class="auth-switch">
-        Masz już konto?
-        <RouterLink class="auth-link" to="/login">Zaloguj się</RouterLink>
-      </p>
+  <div class="auth-layout">
+    <BrandBar />
+    <div class="auth-page">
+      <Card class="auth-card">
+      <template #title>Rejestracja</template>
+      <template #subtitle>Załóż konto i zacznij planować swój ślub</template>
+      <template #content>
+        <form class="auth-form" @submit.prevent="onSubmit">
+          <div class="field-group">
+            <FloatLabel variant="on">
+              <InputText
+                id="register-name"
+                v-model="name"
+                type="text"
+                required
+                autocomplete="username"
+                :invalid="!!errors.name"
+                fluid
+              />
+              <label for="register-name">Nazwa użytkownika</label>
+            </FloatLabel>
+            <Message v-if="errors.name" severity="error" size="small" variant="simple">
+              {{ errors.name[0] }}
+            </Message>
+          </div>
+          <div class="field-group">
+            <FloatLabel variant="on">
+              <InputText
+                id="register-email"
+                v-model="email"
+                type="email"
+                required
+                autocomplete="email"
+                :invalid="!!errors.email"
+                fluid
+              />
+              <label for="register-email">Email</label>
+            </FloatLabel>
+            <Message v-if="errors.email" severity="error" size="small" variant="simple">
+              {{ errors.email[0] }}
+            </Message>
+          </div>
+          <div class="field-group">
+            <FloatLabel variant="on">
+              <Password
+                id="register-password"
+                v-model="password"
+                required
+                autocomplete="new-password"
+                toggleMask
+                :invalid="!!errors.password"
+                fluid
+              />
+              <label for="register-password">Hasło</label>
+            </FloatLabel>
+            <Message v-if="errors.password" severity="error" size="small" variant="simple">
+              {{ errors.password[0] }}
+            </Message>
+          </div>
+          <FloatLabel variant="on">
+            <Password
+              id="register-password-confirmation"
+              v-model="passwordConfirmation"
+              required
+              autocomplete="new-password"
+              :feedback="false"
+              toggleMask
+              fluid
+            />
+            <label for="register-password-confirmation">Powtórz hasło</label>
+          </FloatLabel>
+          <Button type="submit" :loading="isLoading" :label="isLoading ? 'Rejestracja…' : 'Załóż konto'" fluid />
+        </form>
+      </template>
+      <template #footer>
+        <p class="auth-switch">
+          Masz już konto?
+          <RouterLink to="/login">Zaloguj się</RouterLink>
+        </p>
+      </template>
+    </Card>
     </div>
   </div>
 </template>
+
+<style scoped>
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3rem 1rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.auth-switch {
+  margin: 0;
+  text-align: center;
+  font-size: 0.92rem;
+}
+</style>

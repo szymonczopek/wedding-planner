@@ -20,7 +20,7 @@ class RegisterUserDTO
     {
         return new self(
             id: Str::uuid(),
-            name: trim(ucfirst($data['name'])),
+            name: trim(ucfirst(strtolower($data['name']))),
             email: strtolower(trim($data['email'])),
             password: $data['password']);
     }
