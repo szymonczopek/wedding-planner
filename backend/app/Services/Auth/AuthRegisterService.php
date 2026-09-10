@@ -15,7 +15,8 @@ class AuthRegisterService
     {
         $registerUserDTO = RegisterUserDTO::fromRequest($request->validated());
 
-        $user = User::create($registerUserDTO->toArray());
+        /** @var User $user */
+        $user = User::query()->create($registerUserDTO->toArray());
 
         return [
             'user' => $user,

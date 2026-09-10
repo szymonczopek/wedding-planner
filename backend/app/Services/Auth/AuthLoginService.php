@@ -5,6 +5,7 @@ namespace App\Services\Auth;
 use App\Http\Requests\LoginFormRequest;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -61,7 +62,11 @@ class AuthLoginService
             return true;
         }
 
-        Auth::guard('web')->logout();
+        $guard = Auth::guard('web');
+
+        if ($guard instanceof StatefulGuard) {
+            $guard->logout();
+        }
 
         return true;
     }

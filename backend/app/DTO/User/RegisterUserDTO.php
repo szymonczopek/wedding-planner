@@ -13,6 +13,9 @@ class RegisterUserDTO
         public readonly string $password,
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromRequest(array $data): self
     {
         return new self(
@@ -22,6 +25,9 @@ class RegisterUserDTO
             password: $data['password']);
     }
 
+    /**
+     * @return array<string>
+     */
     public function toArray(): array
     {
         return [
