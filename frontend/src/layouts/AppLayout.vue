@@ -53,6 +53,7 @@ const mobileNavOpen = ref(false)
 .user-name {
   font-weight: 600;
   margin: 0 0.25rem;
+  color: #000000;
 }
 
 .logout-btn {

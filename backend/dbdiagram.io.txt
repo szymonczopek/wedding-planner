@@ -1,0 +1,139 @@
+Table users {
+  id uuid [primary key]
+
+  name varchar
+  email varchar [unique]
+  email_verified_at timestamp [null]
+  password varchar
+  rememberToken varchar
+  groom bool //pan młody
+
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table weddings {
+  id uuid [primary key]
+
+  created_by varchar [ref: > users.id, not null]
+
+  name varchar
+  date timestamp
+
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Table wedding_user {
+  id uuid
+
+  user_id varchar [ref: > users.id, not null]
+  wedding_id varchar [ref: > weddings.id, not null]
+
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table guests {
+  id uuid [primary key]
+
+  wedding_id varchar [ref: > weddings.id, not null]
+  created_by varchar [ref: > users.id, not null]
+
+  name varchar
+  surname varchar
+  acquaintance_type varchar
+  child bool
+  groom bool //gość pana młodego
+  has_accompanying_person bool //ma osobe towarzyszącą
+  invitation_prepared bool
+  invitation_delivered bool
+  confirmed_attendance bool
+  diet varchar
+
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Table _tables {
+  id uuid [primary key]
+
+  wedding_id varchar [ref: > weddings.id, not null]
+  created_by varchar [ref: > users.id, not null]
+
+  name varchar
+  capacity int
+  position_x varchar
+  position_y varchar
+  width varchar
+  heitgh varchar
+  radius varchar
+
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Table table_guest {
+  id uuid [primary key]
+
+  table_id varchar [ref: > _tables.id, not null]
+  guest_id varchar [ref: > guests.id, not null]
+  created_by varchar [ref: > users.id, not null]
+
+  position_x varchar
+  position_y varchar
+
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table finances {
+  id uuid [primary key]
+
+  wedding_id varchar [ref: > weddings.id, not null]
+  created_by varchar [ref: > users.id, not null]
+
+  name varchar
+  amount double
+  category varchar
+  contact varchar
+  payment_deadline timestamp
+  payment_status varchar
+  _note text
+
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Table calendars {
+  id uuid [primary key]
+
+  wedding_id varchar [ref: > weddings.id, not null]
+  created_by varchar [ref: > users.id, not null]
+
+  name varchar
+  color varchar
+  wedding_day_calendar bool
+
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Table calendar_event {
+  id uuid [primary key]
+
+  calendar_id varchar [ref: > calendars.id, not null]
+  created_by varchar [ref: > users.id, not null]
+
+  date timestamp
+
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+}
+

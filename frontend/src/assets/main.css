@@ -1,5 +1,5 @@
 :root {
-  --gold: #c6a15b;
+  --gold: linear-gradient(-45deg, #ffef7e 0%, #b8860b 100%);
   --gold-dark: #a07c33;
   --ink: #3d3428;
   --font-display: 'Bodoni Moda', Georgia, 'Times New Roman', serif;

@@ -54,6 +54,7 @@ defineEmits(['toggle-nav'])
   font-size: 2rem;
   white-space: nowrap;
   text-align: center;
+  color: black;
 }
 
 .nav-toggle {

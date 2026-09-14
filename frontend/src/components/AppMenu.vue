@@ -6,7 +6,10 @@ import Menu from 'primevue/menu'
 const items = ref([
   { label: 'Pulpit', icon: 'pi pi-home', route: '/' },
   { label: 'Lista gości', icon: 'pi pi-users', route: '/guests' },
-  { label: 'Stoły', icon: 'pi-th-large', route: '/tables' },
+  { label: 'Układ stołów', icon: 'pi pi-th-large', route: '/tables' },
+  { label: 'Wydatki', icon: 'pi pi-wallet', route: '/finances' },
+  { label: 'Kalendarz', icon: 'pi pi-calendar', route: '/calendar' },
+  { label: 'Dzień ślubu', icon: 'pi pi-calendar-clock', route: '/wedding-day' },
 ])
 </script>
 
@@ -39,7 +42,9 @@ const items = ref([
   color: inherit;
 }
 
-.menu-router-link.router-link-active {
+.menu-router-link.router-link-exact-active {
   font-weight: 700;
+  background: var(--gold);
+  color: black;
 }
 </style>

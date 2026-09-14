@@ -6,6 +6,9 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import MainDesktopView from '@/views/MainDesktopView.vue'
 import GuestsView from '@/views/GuestsView.vue'
 import TablesView from "../views/TablesView.vue";
+import FinancesView from "../views/FinancesView.vue";
+import CalendarView from "../views/CalendarView.vue";
+import WeddingDayView from "../views/WeddingDayView.vue";
 
 const routes = [
   {
@@ -15,7 +18,10 @@ const routes = [
     children: [
       { path: '', component: MainDesktopView },
       { path: 'guests', component: GuestsView },
-      { path: 'tables', component: TablesView }
+      { path: 'tables', component: TablesView },
+      { path: 'finances', component: FinancesView },
+      { path: 'calendar', component: CalendarView },
+      { path: 'wedding-day', component: WeddingDayView }
     ],
   },
   { path: '/login', component: LoginView, meta: { guestOnly: true } },
