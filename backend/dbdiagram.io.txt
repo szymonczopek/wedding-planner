@@ -6,7 +6,7 @@ Table users {
   email_verified_at timestamp [null]
   password varchar
   rememberToken varchar
-  groom bool //pan młody
+  role varchar
 
   created_at timestamp
   updated_at timestamp
@@ -46,7 +46,7 @@ Table guests {
   acquaintance_type varchar
   child bool
   groom bool //gość pana młodego
-  has_accompanying_person bool //ma osobe towarzyszącą
+  main_guest_id varchar [ref: >? guests.id] // kto jest głowną osobą tej osoby tow.
   invitation_prepared bool
   invitation_delivered bool
   confirmed_attendance bool
@@ -65,11 +65,11 @@ Table _tables {
 
   name varchar
   capacity int
-  position_x varchar
-  position_y varchar
+  position_x float
+  position_y float
   width varchar
-  heitgh varchar
-  radius varchar
+  height varchar
+  radius float
 
   created_at timestamp
   updated_at timestamp
@@ -83,8 +83,8 @@ Table table_guest {
   guest_id varchar [ref: > guests.id, not null]
   created_by varchar [ref: > users.id, not null]
 
-  position_x varchar
-  position_y varchar
+  position_x float
+  position_y float
 
   created_at timestamp
   updated_at timestamp
