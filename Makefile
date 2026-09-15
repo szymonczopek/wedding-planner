@@ -47,6 +47,9 @@ phpstan:
 
 stan: phpstan
 
+swagger:
+	docker.exe compose exec php php artisan l5-swagger:generate
+
 health:
 	curl -s http://localhost/api/health | jq . || curl -s http://localhost/api/health
 	@echo ""

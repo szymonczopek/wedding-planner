@@ -9,7 +9,13 @@ use App\Services\Auth\AuthRegisterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use OpenApi\Attributes as OA;
 
+#[OA\Info(
+    version: "1.0.0",
+    description: "API",
+    title: "Wedding Planner Laravel API"
+)]
 class AuthController extends Controller
 {
     private AuthRegisterService $registerService;
@@ -22,6 +28,13 @@ class AuthController extends Controller
         $this->loginService = $loginService;
     }
 
+    #[OA\Post(
+        path: "/api/register",
+        summary: "Endpoint testowy",
+        responses: [
+            new OA\Response(response: 200, description: "OK")
+        ]
+    )]
     public function register(RegisterFormRequest $request): JsonResponse
     {
         return response()->json($this->registerService->registerUser($request), 201);
