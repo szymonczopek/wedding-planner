@@ -129,6 +129,13 @@
       <path value="$PROJECT_DIR$/backend/vendor/myclabs/deep-copy" />
       <path value="$PROJECT_DIR$/backend/vendor/nunomaduro/collision" />
       <path value="$PROJECT_DIR$/backend/vendor/phpstan/phpstan" />
+      <path value="$PROJECT_DIR$/backend/vendor/radebatz/type-info-extras" />
+      <path value="$PROJECT_DIR$/backend/vendor/darkaonline/l5-swagger" />
+      <path value="$PROJECT_DIR$/backend/vendor/zircote/swagger-php" />
+      <path value="$PROJECT_DIR$/backend/vendor/symfony/type-info" />
+      <path value="$PROJECT_DIR$/backend/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/backend/vendor/swagger-api/swagger-ui" />
+      <path value="$PROJECT_DIR$/backend/vendor/phpstan/phpdoc-parser" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.3">
