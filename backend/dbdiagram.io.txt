@@ -38,8 +38,9 @@ Table wedding_user {
 Table guests {
   id uuid [primary key]
 
-  wedding_id varchar [ref: > weddings.id, not null]
+  table_id varchar [ref: > _tables.id, not null]
   created_by varchar [ref: > users.id, not null]
+  address_id varchar [ref: > addresses.id, not null]
 
   name varchar
   surname varchar
@@ -51,10 +52,22 @@ Table guests {
   invitation_delivered bool
   confirmed_attendance bool
   diet varchar
+  table_position_x float
+  table_position_y float
 
   created_at timestamp
   updated_at timestamp
   deleted_at timestamp
+}
+
+Table addresses {
+  id uuid [primary key]
+
+  street varchar
+  house_number varchar
+  local_number varchar
+  city varchar
+  postal_code varchar
 }
 
 Table _tables {
@@ -74,20 +87,6 @@ Table _tables {
   created_at timestamp
   updated_at timestamp
   deleted_at timestamp
-}
-
-Table table_guest {
-  id uuid [primary key]
-
-  table_id varchar [ref: > _tables.id, not null]
-  guest_id varchar [ref: > guests.id, not null]
-  created_by varchar [ref: > users.id, not null]
-
-  position_x float
-  position_y float
-
-  created_at timestamp
-  updated_at timestamp
 }
 
 Table finances {

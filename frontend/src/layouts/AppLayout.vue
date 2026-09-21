@@ -4,9 +4,9 @@ import { RouterView } from 'vue-router'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import Drawer from 'primevue/drawer'
-import BrandBar from '@/components/BrandBar.vue'
-import AppMenu from '@/components/AppMenu.vue'
-import { useAuth } from '@/composables/useAuth.js'
+import BrandBar from '../components/BrandBar.vue'
+import AppMenu from '../components/AppMenu.vue'
+import { useAuth } from '../composables/useAuth.js'
 
 const { user, logout } = useAuth()
 const mobileNavOpen = ref(false)

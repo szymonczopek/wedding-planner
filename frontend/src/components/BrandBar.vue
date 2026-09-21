@@ -1,7 +1,7 @@
 <script setup>
 import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
-import logoUrl from '@/resources/assets/wedding-planner-logo.jpg'
+import logoUrl from '../resources/assets/wedding-planner-logo.jpg'
 
 defineProps({
   showMenuButton: { type: Boolean, default: false },

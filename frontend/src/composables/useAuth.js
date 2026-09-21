@@ -1,6 +1,6 @@
 import {ref, computed} from 'vue'
-import router from '@/router/index.js'
-import api, {setAuthToken, clearAuthToken, getAuthToken} from "@/api/client.js";
+import router from '../router/index.js'
+import api, {setAuthToken, clearAuthToken, getAuthToken} from "../api/client.js";
 
 const user = ref(null)
 const isLoading = ref(false)
