@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('calendars', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->foreignUuid('wedding_id')->constrained('weddings')->cascadeOnDelete();
+            $table->foreignUuid('created_by')->constrained('users')->cascadeOnDelete();
+
+            $table->string('name');
+            $table->string('color');
+            $table->boolean('wedding_day_calendar');
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    public function down(): void
+    {
+    }
+};

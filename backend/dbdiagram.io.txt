@@ -6,7 +6,8 @@ Table users {
   email_verified_at timestamp [null]
   password varchar
   rememberToken varchar
-  role varchar
+  role enum
+  user_invite_code varchar [unique]
 
   created_at timestamp
   updated_at timestamp
@@ -35,25 +36,19 @@ Table wedding_user {
   updated_at timestamp
 }
 
-Table guests {
+Table _tables {
   id uuid [primary key]
 
-  table_id varchar [ref: > _tables.id, not null]
+  wedding_id varchar [ref: > weddings.id, not null]
   created_by varchar [ref: > users.id, not null]
-  address_id varchar [ref: > addresses.id, not null]
 
   name varchar
-  surname varchar
-  acquaintance_type varchar
-  child bool
-  groom bool //gość pana młodego
-  main_guest_id varchar [ref: >? guests.id] // kto jest głowną osobą tej osoby tow.
-  invitation_prepared bool
-  invitation_delivered bool
-  confirmed_attendance bool
-  diet varchar
-  table_position_x float
-  table_position_y float
+  capacity int
+  position_x float
+  position_y float
+  width float
+  height float
+  radius float
 
   created_at timestamp
   updated_at timestamp
@@ -70,19 +65,25 @@ Table addresses {
   postal_code varchar
 }
 
-Table _tables {
+Table guests {
   id uuid [primary key]
 
-  wedding_id varchar [ref: > weddings.id, not null]
+  table_id varchar [ref: > _tables.id, not null]
   created_by varchar [ref: > users.id, not null]
+  address_id varchar [ref: > addresses.id, not null]
+  main_guest_id varchar [ref: >? guests.id] // kto jest głowną osobą tej osoby tow.
 
   name varchar
-  capacity int
-  position_x float
-  position_y float
-  width varchar
-  height varchar
-  radius float
+  surname varchar
+  acquaintance_type enum //rodzaj znajomosci
+  child bool
+  groom_guest bool //gość pana młodego
+  invitation_prepared bool
+  invitation_delivered bool
+  confirmed_attendance bool
+  diet enum
+  table_position_x float
+  table_position_y float
 
   created_at timestamp
   updated_at timestamp
@@ -97,11 +98,11 @@ Table finances {
 
   name varchar
   amount double
-  category varchar
-  contact varchar
-  payment_deadline timestamp
-  payment_status varchar
-  _note text
+  category varchar [null]
+  contact varchar [null]
+  payment_deadline timestamp [null]
+  payment_status varchar [null]
+  _note text [null]
 
   created_at timestamp
   updated_at timestamp
