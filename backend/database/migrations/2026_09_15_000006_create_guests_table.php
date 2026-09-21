@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('guests', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
+            $table->foreignUuid('wedding_id')->constrained('weddings')->cascadeOnDelete();
             $table->foreignUuid('table_id')->nullable()->constrained('tables')->cascadeOnDelete();
             $table->foreignUuid('created_by')->constrained('users')->cascadeOnDelete();
             $table->foreignUuid('address_id')->nullable()->constrained('addresses')->cascadeOnDelete();

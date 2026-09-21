@@ -19,7 +19,7 @@ Table weddings {
   created_by varchar [ref: > users.id, not null]
 
   name varchar
-  date timestamp
+  date timestamp [null]
 
   created_at timestamp
   updated_at timestamp
@@ -43,12 +43,12 @@ Table _tables {
   created_by varchar [ref: > users.id, not null]
 
   name varchar
-  capacity int
-  position_x float
-  position_y float
-  width float
-  height float
-  radius float
+  capacity int [null]
+  position_x float [null]
+  position_y float [null]
+  width float [null]
+  height float [null]
+  radius float [null]
 
   created_at timestamp
   updated_at timestamp
@@ -60,17 +60,19 @@ Table addresses {
 
   street varchar
   house_number varchar
-  local_number varchar
+  local_number varchar  [null]
   city varchar
   postal_code varchar
+  country varchar
 }
 
 Table guests {
   id uuid [primary key]
 
-  table_id varchar [ref: > _tables.id, not null]
+  wedding_id varchar [ref: > weddings.id, not null]
+  table_id varchar [ref: >? _tables.id]
   created_by varchar [ref: > users.id, not null]
-  address_id varchar [ref: > addresses.id, not null]
+  address_id varchar [ref: >? addresses.id]
   main_guest_id varchar [ref: >? guests.id] // kto jest głowną osobą tej osoby tow.
 
   name varchar
@@ -82,8 +84,8 @@ Table guests {
   invitation_delivered bool
   confirmed_attendance bool
   diet enum
-  table_position_x float
-  table_position_y float
+  table_position_x float [null]
+  table_position_y float [null]
 
   created_at timestamp
   updated_at timestamp
