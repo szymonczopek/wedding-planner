@@ -6,6 +6,8 @@ use App\Enums\UserRolesEnum;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,10 +17,14 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
+ * @property UserRolesEnum $role
+ * @property-read string $role_label
+ *
  * @method static static create(array<string, mixed> $attributes = [])
+ * @method static Builder|User where(string|array|\Closure $column, mixed $operator = null, mixed $value = null)
  */
-#[Fillable(['id', 'name', 'email', 'password', 'role', 'user_invite_code'])]
-#[Hidden(['password', 'remember_token'])]
+#[Fillable(['id', 'name', 'email', 'password', 'role', 'invite_code'])]
+#[Hidden(['id', 'email', 'password', 'role', 'password', 'remember_token', 'created_at', 'updated_at', 'email_verified_at'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -40,6 +46,13 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => UserRolesEnum::class,
         ];
+    }
+
+    protected $appends = ['role_label'];
+
+    protected function roleLabel(): Attribute
+    {
+        return Attribute::get(fn () => $this->role->label());
     }
 
     public function createdWeddings(): HasMany

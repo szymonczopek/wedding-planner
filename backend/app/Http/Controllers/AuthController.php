@@ -12,9 +12,9 @@ use Illuminate\Routing\Controller;
 use OpenApi\Attributes as OA;
 
 #[OA\Info(
-    version: "1.0.0",
-    description: "API",
-    title: "Wedding Planner Laravel API"
+    version: '1.0.0',
+    description: 'API',
+    title: 'Wedding Planner Laravel API'
 )]
 class AuthController extends Controller
 {
@@ -29,10 +29,10 @@ class AuthController extends Controller
     }
 
     #[OA\Post(
-        path: "/api/register",
-        summary: "Endpoint testowy",
+        path: '/api/register',
+        summary: 'Endpoint testowy',
         responses: [
-            new OA\Response(response: 200, description: "OK")
+            new OA\Response(response: 200, description: 'OK'),
         ]
     )]
     public function register(RegisterFormRequest $request): JsonResponse

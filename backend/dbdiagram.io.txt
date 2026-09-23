@@ -7,7 +7,7 @@ Table users {
   password varchar
   rememberToken varchar
   role enum
-  user_invite_code varchar [unique]
+  invite_code varchar [unique]
 
   created_at timestamp
   updated_at timestamp

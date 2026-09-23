@@ -14,11 +14,9 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->enum('role', array_column(UserRolesEnum::cases(), 'value'))->default(UserRolesEnum::WEDDING_PLANNER->value);
-            $table->string('user_invite_code')->unique()->default('xxx');
+            $table->string('invite_code')->unique()->default('xxx');
         });
     }
 
-    public function down(): void
-    {
-    }
+    public function down(): void {}
 };

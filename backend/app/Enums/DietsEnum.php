@@ -39,6 +39,7 @@ enum DietsEnum: string
             self::cases(),
             function ($carry, $case) {
                 $carry[$case->value] = $case->label();
+
                 return $carry;
             },
             []

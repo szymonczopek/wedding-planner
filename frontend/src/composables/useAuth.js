@@ -21,10 +21,10 @@ export function useAuth() {
         }
     }
 
-    async function register(name, email, password, password_confirmation) {
+    async function register(name, email, password, password_confirmation, role) {
         isLoading.value = true
         try {
-            const {data} = await api.post('/register', {name, email, password, password_confirmation})
+            const {data} = await api.post('/register', {name, email, password, password_confirmation, role})
             setAuthToken(data.token)
             user.value = data.user
             router.push('/')

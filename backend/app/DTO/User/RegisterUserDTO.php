@@ -2,15 +2,18 @@
 
 namespace App\DTO\User;
 
+use App\Models\User;
 use Illuminate\Support\Str;
 
-class RegisterUserDTO
+readonly class RegisterUserDTO
 {
     public function __construct(
-        public readonly string $id,
-        public readonly string $name,
-        public readonly string $email,
-        public readonly string $password,
+        public string $id,
+        public string $name,
+        public string $email,
+        public string $password,
+        public string $role,
+        public string $invite_code,
     ) {}
 
     /**
@@ -22,7 +25,10 @@ class RegisterUserDTO
             id: Str::uuid(),
             name: trim(ucfirst(strtolower($data['name']))),
             email: strtolower(trim($data['email'])),
-            password: $data['password']);
+            password: $data['password'],
+            role: $data['role'],
+            invite_code: self::generateInviteCode()
+        );
     }
 
     /**
@@ -35,6 +41,17 @@ class RegisterUserDTO
             'name' => $this->name,
             'email' => $this->email,
             'password' => $this->password,
+            'role' => $this->role,
+            'invite_code' => $this->invite_code,
         ];
+    }
+
+    public static function generateInviteCode(): string
+    {
+        do {
+            $inviteCode = strtolower(Str::random(4).'-'.Str::random(4));
+        } while (User::where('invite_code', $inviteCode)->exists());
+
+        return $inviteCode;
     }
 }

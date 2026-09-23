@@ -13,7 +13,7 @@ enum UserRolesEnum: string
         return match ($this) {
             self::GROOM => 'Pan młody',
             self::BRIDE => 'Pani młoda',
-            self::WEDDING_PLANNER => 'Wedding Planner',
+            self::WEDDING_PLANNER => 'Konsultant ślubny',
         };
     }
 
@@ -23,6 +23,7 @@ enum UserRolesEnum: string
             self::cases(),
             function ($carry, $case) {
                 $carry[$case->value] = $case->label();
+
                 return $carry;
             },
             []

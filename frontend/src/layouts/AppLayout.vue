@@ -16,12 +16,20 @@ const mobileNavOpen = ref(false)
   <div class="app-layout">
     <BrandBar show-menu-button @toggle-nav="mobileNavOpen = true">
       <template #end>
-        <Avatar
-          :label="user?.name?.[0]?.toUpperCase() ?? '?'"
-          shape="circle"
-          class="user-avatar"
-        />
-        <span class="user-name">{{ user?.name }}</span>
+        <div class="brandBar-user-data">
+          <div>
+            <Avatar
+              :label="user?.name?.[0]?.toUpperCase() ?? '?'"
+              shape="circle"
+              class="user-avatar"
+            />
+            <span class="user-name">{{user?.role_label}} {{ user?.name }}</span>
+          </div>
+          <div class="user-invite-code">
+            <label>Kod zaproszenia: </label>
+            <span>{{ user?.invite_code }}</span>
+          </div>
+        </div>
         <Button label="Wyloguj" icon="pi pi-sign-out" class="logout-btn" @click="logout" />
       </template>
     </BrandBar>
@@ -50,10 +58,14 @@ const mobileNavOpen = ref(false)
   flex-direction: column;
 }
 
-.user-name {
+.user-name, .user-invite-code {
   font-weight: 600;
   margin: 0 0.25rem;
   color: #000000;
+}
+
+.brandBar-user-data {
+  text-align: center;
 }
 
 .logout-btn {
@@ -66,6 +78,10 @@ const mobileNavOpen = ref(false)
   background: var(--p-menu-item-focus-background, var(--p-surface-100, #f5f5f5));
   border-color: var(--p-menu-border-color, transparent);
   color: var(--p-menu-item-focus-color, var(--p-text-color));
+}
+
+.user-invite-code {
+  color: black;
 }
 
 .app-body {

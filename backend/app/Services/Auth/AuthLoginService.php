@@ -5,10 +5,12 @@ namespace App\Services\Auth;
 use App\Http\Requests\LoginFormRequest;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\Contracts\HasAbilities;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthLoginService
@@ -41,6 +43,7 @@ class AuthLoginService
             return false;
         }
 
+        /** @var HasAbilities|null $accessToken */
         $accessToken = $user->currentAccessToken();
 
         if ($accessToken instanceof PersonalAccessToken) {
@@ -62,6 +65,7 @@ class AuthLoginService
             return true;
         }
 
+        /** @var Guard|StatefulGuard $guard */
         $guard = Auth::guard('web');
 
         if ($guard instanceof StatefulGuard) {

@@ -47,6 +47,9 @@ phpstan:
 
 stan: phpstan
 
+ide-helper:
+	docker.exe compose exec php php artisan ide-helper:models -N
+
 swagger:
 	docker.exe compose exec php php artisan l5-swagger:generate
 
