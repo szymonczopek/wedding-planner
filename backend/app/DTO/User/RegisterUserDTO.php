@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 readonly class RegisterUserDTO
 {
     public function __construct(
-        public string $id,
         public string $name,
         public string $email,
         public string $password,
@@ -22,7 +21,6 @@ readonly class RegisterUserDTO
     public static function fromRequest(array $data): self
     {
         return new self(
-            id: Str::uuid(),
             name: trim(ucfirst(strtolower($data['name']))),
             email: strtolower(trim($data['email'])),
             password: $data['password'],
@@ -37,7 +35,6 @@ readonly class RegisterUserDTO
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
             'password' => $this->password,

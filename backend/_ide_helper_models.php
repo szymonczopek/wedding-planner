@@ -241,6 +241,8 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @property UserRolesEnum $role
+ * @property-read string $role_label
  * @method static static create(array<string, mixed> $attributes = [])
  * @method static Builder|User where(string|array|\Closure $column, mixed $operator = null, mixed $value = null)
  * @property string $id
@@ -251,7 +253,6 @@ namespace App\Models{
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \App\Enums\UserRolesEnum $role
  * @property string $invite_code
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CalendarEvent> $createdCalendarEvents
  * @property-read int|null $created_calendar_events_count
@@ -267,7 +268,6 @@ namespace App\Models{
  * @property-read int|null $created_weddings_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read mixed $role_label
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WeddingUser> $weddingUsers

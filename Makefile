@@ -1,4 +1,4 @@
-.PHONY: up down build logs shell-php shell-node install-laravel migrate fresh test pint pint-fix phpstan stan
+.PHONY: up down build logs shell-php shell-node install-laravel migrate fresh test pint pint-fix phpstan stan review
 
 up:
 	docker.exe compose up -d
@@ -52,6 +52,8 @@ ide-helper:
 
 swagger:
 	docker.exe compose exec php php artisan l5-swagger:generate
+
+review: pint-fix ide-helper stan
 
 health:
 	curl -s http://localhost/api/health | jq . || curl -s http://localhost/api/health
