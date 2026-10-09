@@ -33,7 +33,7 @@ class Wedding extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'wedding_user', 'wedding_id', 'user_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'wedding_user', 'wedding_id', 'user_id')->using(WeddingUser::class)->withTimestamps();
     }
 
     public function weddingUsers(): HasMany

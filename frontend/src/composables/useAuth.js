@@ -1,4 +1,4 @@
-import {ref, computed} from 'vue'
+import {ref, computed, reactive} from 'vue'
 import router from '../router/index.js'
 import api, {setAuthToken, clearAuthToken, getAuthToken} from "../api/client.js";
 
@@ -13,11 +13,23 @@ export function useAuth() {
         try {
             const {data} = await api.post('/login', {email, password})
             setAuthToken(data.token)
-            user.value = data.user
-            router.push('/')
 
+            user.value = data.user
+            await resolveWedding(data.user?.weddings)
         } finally {
             isLoading.value = false
+        }
+    }
+
+    async function resolveWedding(weddings) {
+        const weddingsCount = weddings?.length || 0
+
+        if (weddingsCount === 0) {
+            await router.push('/create-wedding')
+        } else if (weddingsCount > 1) {
+            await router.push('/choose-wedding')
+        } else {
+            await router.push('/')
         }
     }
 
@@ -27,7 +39,7 @@ export function useAuth() {
             const {data} = await api.post('/register', {name, email, password, password_confirmation, role})
             setAuthToken(data.token)
             user.value = data.user
-            router.push('/')
+            await resolveWedding(data.user?.weddings)
         } finally {
             isLoading.value = false
         }
@@ -56,5 +68,23 @@ export function useAuth() {
         }
     }
 
-    return {user, isAuthenticated, isLoading, login, register, logout, fetchUser }
+    async function createWedding(name, date) {
+        isLoading.value = true
+        try {
+            await api.post('/create-wedding', {name, date})
+        } finally {
+            isLoading.value = false
+        }
+    }
+
+    async function joinToWedding(inviteCode) {
+        isLoading.value = true
+        try {
+            await api.post('/join-wedding', { invite_code: inviteCode })
+        } finally {
+            isLoading.value = false
+        }
+    }
+
+    return {user, isAuthenticated, isLoading, login, register, logout, fetchUser, createWedding, joinToWedding }
 }

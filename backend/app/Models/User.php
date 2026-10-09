@@ -62,7 +62,7 @@ class User extends Authenticatable
 
     public function weddings(): BelongsToMany
     {
-        return $this->belongsToMany(Wedding::class, 'wedding_user', 'user_id', 'wedding_id')->withTimestamps();
+        return $this->belongsToMany(Wedding::class, 'wedding_user', 'user_id', 'wedding_id')->using(WeddingUser::class)->withTimestamps();
     }
 
     public function weddingUsers(): HasMany

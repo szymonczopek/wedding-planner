@@ -30,7 +30,7 @@ class AuthLoginService
         $user = Auth::user();
 
         return [
-            'user' => $user,
+            'user' => $user->load('weddings'),
             'token' => $user->createToken('auth-token')->plainTextToken,
         ];
     }
