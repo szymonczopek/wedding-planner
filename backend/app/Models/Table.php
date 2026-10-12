@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 #[Fillable(['wedding_id', 'created_by', 'name', 'capacity', 'position_x', 'position_y', 'width', 'height', 'radius'])]
 class Table extends Model
@@ -28,6 +29,15 @@ class Table extends Model
             'height' => 'float',
             'radius' => 'float',
         ];
+    }
+
+    protected static function booted()
+    {
+        static::creating(function (Table $table) {
+            if (Auth::check() && empty($table->created_by)) {
+                $table->created_by = Auth::id();
+            }
+        });
     }
 
     public function wedding(): BelongsTo

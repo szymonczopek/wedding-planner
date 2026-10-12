@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 #[Fillable(['wedding_id', 'created_by', 'name', 'amount', 'category', 'contact', 'payment_deadline', 'payment_status', 'note'])]
 class Finance extends Model
@@ -24,7 +25,14 @@ class Finance extends Model
             'payment_deadline' => 'datetime',
         ];
     }
-
+    protected static function booted()
+    {
+        static::creating(function (Finance $finance) {
+            if (Auth::check() && empty($finance->created_by)) {
+                $finance->created_by = Auth::id();
+            }
+        });
+    }
     public function wedding(): BelongsTo
     {
         return $this->belongsTo(Wedding::class, 'wedding_id');

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 #[Fillable(['wedding_id', 'table_id', 'created_by', 'address_id', 'main_guest_id', 'name', 'surname', 'acquaintance_type', 'child', 'groom_guest', 'invitation_prepared', 'invitation_delivered', 'confirmed_attendance', 'diet', 'table_position_x', 'table_position_y'])]
 class Guest extends Model
@@ -34,7 +35,14 @@ class Guest extends Model
             'table_position_y' => 'float',
         ];
     }
-
+    protected static function booted()
+    {
+        static::creating(function (Guest $guest) {
+            if (Auth::check() && empty($guest->created_by)) {
+                $guest->created_by = Auth::id();
+            }
+        });
+    }
     public function wedding(): BelongsTo
     {
         return $this->belongsTo(Wedding::class, 'wedding_id');

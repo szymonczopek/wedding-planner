@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 #[Fillable(['calendar_id', 'created_by', 'date'])]
 class CalendarEvent extends Model
@@ -24,6 +25,14 @@ class CalendarEvent extends Model
         return [
             'date' => 'datetime',
         ];
+    }
+    protected static function booted()
+    {
+        static::creating(function (CalendarEvent $calendarEvent) {
+            if (Auth::check() && empty($calendarEvent->created_by)) {
+                $calendarEvent->created_by = Auth::id();
+            }
+        });
     }
 
     public function calendar(): BelongsTo

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 #[Fillable(['wedding_id', 'created_by', 'name', 'color', 'wedding_day_calendar'])]
 class Calendar extends Model
@@ -23,6 +24,14 @@ class Calendar extends Model
         return [
             'wedding_day_calendar' => 'boolean',
         ];
+    }
+    protected static function booted()
+    {
+        static::creating(function (Calendar $calendar) {
+            if (Auth::check() && empty($calendar->created_by)) {
+                $calendar->created_by = Auth::id();
+            }
+        });
     }
 
     public function wedding(): BelongsTo
