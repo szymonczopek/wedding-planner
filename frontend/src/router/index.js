@@ -9,7 +9,7 @@ import TablesView from "../views/TablesView.vue";
 import FinancesView from "../views/FinancesView.vue";
 import CalendarView from "../views/CalendarView.vue";
 import WeddingDayView from "../views/WeddingDayView.vue";
-import CreateWedding from "../views/CreateWedding.vue";
+import CreateOrJoinWeddingView from "../views/CreateOrJoinWeddingView.vue";
 import ChooseWedding from "../views/ChooseWedding.vue";
 
 const routes = [
@@ -28,7 +28,7 @@ const routes = [
   },
   { path: '/login', component: LoginView, meta: { guestOnly: true } },
   { path: '/register', component: RegisterView, meta: { guestOnly: true } },
-  { path: '/create-wedding', component: CreateWedding, meta: { requiresAuth: true } },
+  { path: '/create-wedding', component: CreateOrJoinWeddingView, meta: { requiresAuth: true } },
   { path: '/choose-wedding', component: ChooseWedding, meta: { requiresAuth: true } },
 ]
 

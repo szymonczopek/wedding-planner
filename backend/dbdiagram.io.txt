@@ -7,7 +7,6 @@ Table users {
   password varchar
   rememberToken varchar
   role enum
-  invite_code varchar [unique]
 
   created_at timestamp
   updated_at timestamp
@@ -20,6 +19,7 @@ Table weddings {
 
   name varchar
   date timestamp [null]
+  invite_code varchar [unique]
 
   created_at timestamp
   updated_at timestamp
@@ -31,6 +31,9 @@ Table wedding_user {
 
   user_id varchar [ref: > users.id, not null]
   wedding_id varchar [ref: > weddings.id, not null]
+
+  role varchar
+  is_active bool
 
   created_at timestamp
   updated_at timestamp

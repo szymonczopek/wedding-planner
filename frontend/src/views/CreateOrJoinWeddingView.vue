@@ -6,26 +6,48 @@ import InputText from 'primevue/inputtext'
 import DatePicker from 'primevue/datepicker'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
+import Select from 'primevue/select'
 import BrandBar from '../components/BrandBar.vue'
 import { useAuth } from '../composables/useAuth.js'
+import { useWedding } from '../composables/useWedding.js'
 import Avatar from "primevue/avatar";
 
-const { user, logout, createWedding, isLoading, joinToWedding } = useAuth()
+const { user, logout} = useAuth()
+const { createWedding, joinToWedding, isCreating, isJoining} = useWedding()
 
 const mobileNavOpen = ref(false)
 const name = ref('')
+const invite_code = ref('')
 const date = ref(null)
-const errors = ref({})
+const createErrors = ref({})
+const joinErrors = ref({})
+const joiningSelectedRole = ref(null);
+const creatingSelectedRole = ref(null);
+const roles = ref([
+  { label: 'Pan młody', key: 'groom' },
+  { label: 'Pani młoda', key: 'bride' },
+  { label: 'Konsultant ślubny', key: 'wedding_planner' }
+]);
 
-async function onSubmit() {
-  errors.value = {}
+async function create() {
+  createErrors.value = {}
   try {
     const formattedDate = date.value instanceof Date ? date.value.toISOString().slice(0, 10) : date.value
-    await createWedding(name.value, formattedDate)
+    await createWedding(name.value, formattedDate, creatingSelectedRole.value)
   } catch (e) {
-    errors.value = e.response?.data?.errors ?? {}
+    createErrors.value = e.response?.data?.errors ?? {}
   }
 }
+
+async function join() {
+  joinErrors.value = {}
+  try {
+    await joinToWedding(invite_code.value, joinToWedding().value)
+  } catch (e) {
+    joinErrors.value = e.response?.data?.errors ?? {}
+  }
+}
+
 </script>
 
 <template>
@@ -42,7 +64,7 @@ async function onSubmit() {
             <span class="user-name">{{user?.role_label}} {{ user?.name }}</span>
           </div>
           <div class="user-invite-code">
-            <label>Kod zaproszenia: </label>
+            <label>Kod wesela: </label>
             <span>{{ user?.invite_code }}</span>
           </div>
         </div>
@@ -51,27 +73,37 @@ async function onSubmit() {
     </BrandBar>
     <div class="auth-page">
       <Card class="auth-card">
-        <template #title>Dołącz do wesela znajomego za pomocą kodu</template>
+        <template #title>Dołącz do wesela za pomocą kodu zaproszenia</template>
         <template #content>
-          <form class="auth-form" @submit.prevent="joinToWedding">
+          <form class="auth-form" @submit.prevent="join()">
             <div class="field-group">
               <FloatLabel variant="on">
                 <InputText
-                    id="wedding-name"
-                    v-model="name"
+                    id="invite_code"
+                    v-model="invite_code"
                     type="text"
                     required
-                    autocomplete="username"
-                    :invalid="!!errors.name"
+                    :invalid="!!joinErrors.invite_code"
                     fluid
                 />
-                <label for="wedding-name">Nazwa wesela</label>
+                <label for="invite_code">Kod wesela</label>
               </FloatLabel>
-              <Message v-if="errors.name" severity="error" size="small" variant="simple">
-                {{ errors.name[0] }}
+              <Message v-if="joinErrors.invite_code" severity="error" size="small" variant="simple">
+                {{ joinErrors.invite_code[0] }}
               </Message>
+              <FloatLabel variant="on">
+                <Select
+                    v-model="joiningSelectedRole"
+                    :options="roles"
+                    optionLabel="label"
+                    optionValue="key"
+                    required
+                    fluid
+                />
+                <label for="user-role-confirmation">Rola</label>
+              </FloatLabel>
             </div>
-            <Button type="submit" :loading="isLoading" :label="isLoading ? 'Tworzenie…' : 'Dołącz do wesela'" fluid />
+            <Button type="submit" :loading="isJoining" :label="isJoining ? 'Dołączanie…' : 'Dołącz do wesela'" fluid />
           </form>
         </template>
       </Card>
@@ -80,7 +112,7 @@ async function onSubmit() {
         <template #title>Stwórz swoje wesele!</template>
         <template #subtitle>Zacznij planować swój ślub w Wedding Planner</template>
         <template #content>
-          <form class="auth-form" @submit.prevent="createWedding">
+          <form class="auth-form" @submit.prevent="create()">
             <div class="field-group">
               <FloatLabel variant="on">
                 <InputText
@@ -89,13 +121,13 @@ async function onSubmit() {
                     type="text"
                     required
                     autocomplete="username"
-                    :invalid="!!errors.name"
+                    :invalid="!!createErrors.name"
                     fluid
                 />
                 <label for="wedding-name">Nazwa wesela</label>
               </FloatLabel>
-              <Message v-if="errors.name" severity="error" size="small" variant="simple">
-                {{ errors.name[0] }}
+              <Message v-if="createErrors.name" severity="error" size="small" variant="simple">
+                {{ createErrors.name[0] }}
               </Message>
             </div>
             <div class="field-group">
@@ -106,16 +138,27 @@ async function onSubmit() {
                     dateFormat="yy-mm-dd"
                     showIcon
                     iconDisplay="input"
-                    :invalid="!!errors.date"
+                    :invalid="!!createErrors.date"
                     fluid
                 />
                 <label for="wedding-date">Data wesela</label>
               </FloatLabel>
-              <Message v-if="errors.date" severity="error" size="small" variant="simple">
-                {{ errors.date[0] }}
+              <Message v-if="createErrors.date" severity="error" size="small" variant="simple">
+                {{ createErrors.date[0] }}
               </Message>
+              <FloatLabel variant="on">
+                <Select
+                    v-model="creatingSelectedRole"
+                    :options="roles"
+                    optionLabel="label"
+                    optionValue="key"
+                    required
+                    fluid
+                />
+                <label for="user-role-confirmation">Rola</label>
+              </FloatLabel>
             </div>
-            <Button type="submit" :loading="isLoading" :label="isLoading ? 'Tworzenie…' : 'Stwórz wesele'" fluid />
+            <Button type="submit" :loading="isCreating" :label="isCreating ? 'Tworzenie…' : 'Stwórz wesele'" fluid />
           </form>
         </template>
       </Card>

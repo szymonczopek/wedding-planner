@@ -1,4 +1,4 @@
-import {ref, computed, reactive} from 'vue'
+import {ref, computed} from 'vue'
 import router from '../router/index.js'
 import api, {setAuthToken, clearAuthToken, getAuthToken} from "../api/client.js";
 
@@ -33,10 +33,10 @@ export function useAuth() {
         }
     }
 
-    async function register(name, email, password, password_confirmation, role) {
+    async function register(name, email, password, password_confirmation) {
         isLoading.value = true
         try {
-            const {data} = await api.post('/register', {name, email, password, password_confirmation, role})
+            const {data} = await api.post('/register', {name, email, password, password_confirmation})
             setAuthToken(data.token)
             user.value = data.user
             await resolveWedding(data.user?.weddings)
@@ -68,23 +68,6 @@ export function useAuth() {
         }
     }
 
-    async function createWedding(name, date) {
-        isLoading.value = true
-        try {
-            await api.post('/create-wedding', {name, date})
-        } finally {
-            isLoading.value = false
-        }
-    }
 
-    async function joinToWedding(inviteCode) {
-        isLoading.value = true
-        try {
-            await api.post('/join-wedding', { invite_code: inviteCode })
-        } finally {
-            isLoading.value = false
-        }
-    }
-
-    return {user, isAuthenticated, isLoading, login, register, logout, fetchUser, createWedding, joinToWedding }
+    return {user, isAuthenticated, isLoading, login, register, logout, fetchUser}
 }

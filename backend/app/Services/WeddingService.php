@@ -3,21 +3,34 @@
 namespace App\Services;
 
 use App\DTO\Wedding\CreateWeddingDTO;
+use App\Http\Requests\WeddingFormRequest;
 use App\Models\Wedding;
+use Illuminate\Support\Facades\DB;
 
 class WeddingService
 {
     /**
-     * @param string $name
+     * @param WeddingFormRequest $request
      * @return Wedding
+     * @throws \Throwable
      */
-    public function createWedding(string $createdBy, string $name): Wedding
+    public function createWedding(WeddingFormRequest $request): Wedding
     {
-        $registerUserDTO = CreateWeddingDTO::fromRequest([
-            'name' => $name,
-            'created_by' => $createdBy,
-        ]);
+        return DB::transaction(function () use ($request) {
+            $weddingDTO = CreateWeddingDTO::fromRequest($request->validated());
 
-        return Wedding::create($registerUserDTO->toArray());
+            $wedding = Wedding::create([
+                'name' => $weddingDTO->name,
+                'date' => $weddingDTO->date ?? null,
+                'invite_code' => $weddingDTO->invite_code,
+            ]);
+
+            auth()->user()->weddings()->save($wedding, [
+                'role' => $weddingDTO->role->value,
+                'is_active' => $weddingDTO->is_active,
+            ]);
+
+            return $wedding;
+        });
     }
 }

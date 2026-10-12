@@ -3,14 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
-#[Fillable(['name', 'date', 'created_by'])]
+#[Hidden(['id', 'created_at', 'updated_at'])]
+#[Fillable(['name', 'date', 'created_by', 'invite_code'])]
 class Wedding extends Model
 {
     use HasUuids, SoftDeletes;
@@ -26,6 +29,15 @@ class Wedding extends Model
         ];
     }
 
+    protected static function booted()
+    {
+        static::creating(function (Wedding $wedding) {
+            if (Auth::check() && empty($wedding->created_by)) {
+                $wedding->created_by = Auth::id();
+            }
+        });
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -33,7 +45,7 @@ class Wedding extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'wedding_user', 'wedding_id', 'user_id')->using(WeddingUser::class)->withTimestamps();
+        return $this->belongsToMany(User::class, 'wedding_user', 'wedding_id', 'user_id')->using(WeddingUser::class)->withPivot(['id','role','is_active'])->withTimestamps();
     }
 
     public function weddingUsers(): HasMany

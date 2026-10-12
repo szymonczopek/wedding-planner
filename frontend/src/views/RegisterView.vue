@@ -8,7 +8,6 @@ import Password from 'primevue/password'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import BrandBar from '../components/BrandBar.vue'
-import Select from 'primevue/select'
 import { useAuth } from '../composables/useAuth.js'
 
 const { register, isLoading } = useAuth()
@@ -18,18 +17,12 @@ const email = ref('')
 const password = ref('')
 const passwordConfirmation = ref('')
 const errors = ref({})
-const roles = ref([
-  { label: 'Pan młody', key: 'groom' },
-  { label: 'Pani młoda', key: 'bride' },
-  { label: 'Konsultant ślubny', key: 'wedding_planner' }
-]);
-const selectedRole = ref(null);
 
 
 async function onSubmit() {
   errors.value = {}
   try {
-    await register(name.value, email.value, password.value, passwordConfirmation.value, selectedRole.value)
+    await register(name.value, email.value, password.value, passwordConfirmation.value)
   } catch (e) {
     errors.value = e.response?.data?.errors ?? {}
   }
@@ -44,7 +37,7 @@ async function onSubmit() {
       <template #title>Rejestracja</template>
       <template #subtitle>Załóż konto i zacznij planować swój ślub w Wedding Planner</template>
       <template #content>
-        <form class="auth-form" @submit.prevent="onSubmit">
+        <form class="auth-form" @submit.prevent="onSubmit()">
           <div class="field-group">
             <FloatLabel variant="on">
               <InputText
@@ -107,17 +100,6 @@ async function onSubmit() {
               fluid
             />
             <label for="register-password-confirmation">Powtórz hasło</label>
-          </FloatLabel>
-          <FloatLabel variant="on">
-            <Select
-                v-model="selectedRole"
-                :options="roles"
-                optionLabel="label"
-                optionValue="key"
-                required
-                fluid
-            />
-            <label for="user-role-confirmation">Rola</label>
           </FloatLabel>
           <Button type="submit" :loading="isLoading" :label="isLoading ? 'Rejestracja…' : 'Załóż konto'" fluid />
         </form>

@@ -26,7 +26,7 @@ const mobileNavOpen = ref(false)
             <span class="user-name">{{user?.role_label}} {{ user?.name }}</span>
           </div>
           <div class="user-invite-code">
-            <label>Kod zaproszenia: </label>
+            <label>Kod wesela: </label>
             <span>{{ user?.invite_code }}</span>
           </div>
         </div>
