@@ -43,6 +43,7 @@ readonly class CreateWeddingDTO
             'invite_code' => $this->invite_code,
         ];
     }
+
     public static function generateInviteCode(): string
     {
         do {

@@ -8,15 +8,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use OpenApi\Attributes as OA;
 
-//#[OA\Info(
+// #[OA\Info(
 //    version: '1.0.0',
 //    description: 'API',
 //    title: 'Wedding Planner Laravel API'
-//)]
+// )]
 class WeddingController extends Controller
 {
     private WeddingService $weddingService;
-
 
     public function __construct(WeddingService $weddingService)
     {

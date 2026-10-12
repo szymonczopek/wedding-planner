@@ -25,6 +25,7 @@ class Calendar extends Model
             'wedding_day_calendar' => 'boolean',
         ];
     }
+
     protected static function booted()
     {
         static::creating(function (Calendar $calendar) {

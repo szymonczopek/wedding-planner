@@ -241,8 +241,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property UserRolesEnum $role
- * @property-read string $role_label
  * @method static static create(array<string, mixed> $attributes = [])
  * @method static Builder|User where(string|array|\Closure $column, mixed $operator = null, mixed $value = null)
  * @property string $id
@@ -253,7 +251,6 @@ namespace App\Models{
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string $invite_code
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CalendarEvent> $createdCalendarEvents
  * @property-read int|null $created_calendar_events_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Calendar> $createdCalendars
@@ -272,6 +269,7 @@ namespace App\Models{
  * @property-read int|null $tokens_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WeddingUser> $weddingUsers
  * @property-read int|null $wedding_users_count
+ * @property-read \App\Models\WeddingUser|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Wedding> $weddings
  * @property-read int|null $weddings_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
@@ -282,11 +280,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereInviteCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  */
 	class User extends \Eloquent {}
@@ -301,6 +297,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string $invite_code
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Calendar> $calendars
  * @property-read int|null $calendars_count
  * @property-read \App\Models\User $creator
@@ -308,6 +305,7 @@ namespace App\Models{
  * @property-read int|null $finances_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Table> $tables
  * @property-read int|null $tables_count
+ * @property-read \App\Models\WeddingUser|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\WeddingUser> $weddingUsers
@@ -321,6 +319,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wedding whereDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wedding whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wedding whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Wedding whereInviteCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wedding whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wedding whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Wedding withTrashed(bool $withTrashed = true)
@@ -331,11 +330,16 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @property UserRolesEnum $role
+ * @property-read string $role_label
+ * @method static static create(array<string, mixed> $attributes = [])
+ * @method static Builder|WeddingUser where(string|array|\Closure $column, mixed $operator = null, mixed $value = null)
  * @property string $id
  * @property string $user_id
  * @property string $wedding_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property bool $is_active
  * @property-read \App\Models\User $user
  * @property-read \App\Models\Wedding|null $wedding
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser newModelQuery()
@@ -343,6 +347,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereWeddingId($value)

@@ -33,6 +33,4 @@ readonly class RegisterUserDTO
             'password' => $this->password,
         ];
     }
-
-
 }

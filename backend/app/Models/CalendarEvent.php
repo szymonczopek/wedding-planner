@@ -26,6 +26,7 @@ class CalendarEvent extends Model
             'date' => 'datetime',
         ];
     }
+
     protected static function booted()
     {
         static::creating(function (CalendarEvent $calendarEvent) {

@@ -35,6 +35,7 @@ class Guest extends Model
             'table_position_y' => 'float',
         ];
     }
+
     protected static function booted()
     {
         static::creating(function (Guest $guest) {
@@ -43,6 +44,7 @@ class Guest extends Model
             }
         });
     }
+
     public function wedding(): BelongsTo
     {
         return $this->belongsTo(Wedding::class, 'wedding_id');

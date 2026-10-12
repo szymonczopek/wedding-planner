@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\DB;
 class WeddingService
 {
     /**
-     * @param WeddingFormRequest $request
-     * @return Wedding
      * @throws \Throwable
      */
     public function createWedding(WeddingFormRequest $request): Wedding

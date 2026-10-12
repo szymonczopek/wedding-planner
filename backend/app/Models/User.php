@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\UserRolesEnum;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -39,7 +38,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed'
+            'password' => 'hashed',
         ];
     }
 
@@ -50,7 +49,7 @@ class User extends Authenticatable
 
     public function weddings(): BelongsToMany
     {
-        return $this->belongsToMany(Wedding::class, 'wedding_user', 'user_id', 'wedding_id')->using(WeddingUser::class)->withPivot(['id','role','is_active'])->withTimestamps();
+        return $this->belongsToMany(Wedding::class, 'wedding_user', 'user_id', 'wedding_id')->using(WeddingUser::class)->withPivot(['id', 'role', 'is_active'])->withTimestamps();
     }
 
     public function weddingUsers(): HasMany

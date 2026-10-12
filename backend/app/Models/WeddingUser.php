@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @property UserRolesEnum $role
@@ -44,7 +44,7 @@ class WeddingUser extends Pivot
 
     protected function roleLabel(): Attribute
     {
-        return Attribute::get(fn() => $this->role->label());
+        return Attribute::get(fn () => $this->role->label());
     }
 
     public function user(): BelongsTo

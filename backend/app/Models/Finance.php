@@ -25,6 +25,7 @@ class Finance extends Model
             'payment_deadline' => 'datetime',
         ];
     }
+
     protected static function booted()
     {
         static::creating(function (Finance $finance) {
@@ -33,6 +34,7 @@ class Finance extends Model
             }
         });
     }
+
     public function wedding(): BelongsTo
     {
         return $this->belongsTo(Wedding::class, 'wedding_id');
