@@ -15,7 +15,7 @@ export function useAuth() {
             setAuthToken(data.token)
 
             user.value = data.user
-            await resolveWedding(data.user?.weddings)
+            await router.push('/')
         } finally {
             isLoading.value = false
         }
@@ -39,7 +39,7 @@ export function useAuth() {
             const {data} = await api.post('/register', {name, email, password, password_confirmation})
             setAuthToken(data.token)
             user.value = data.user
-            await resolveWedding(data.user?.weddings)
+            await router.push('/')
         } finally {
             isLoading.value = false
         }
@@ -60,7 +60,7 @@ export function useAuth() {
     async function fetchUser() {
         if (!getAuthToken()) return
         try {
-            const {data} = await api.get('/me')
+            const {data} = await api.get('/user')
             user.value = data
         } catch {
             clearAuthToken()
@@ -69,5 +69,5 @@ export function useAuth() {
     }
 
 
-    return {user, isAuthenticated, isLoading, login, register, logout, fetchUser}
+    return {user, isAuthenticated, isLoading, login, register, logout, fetchUser, resolveWedding}
 }

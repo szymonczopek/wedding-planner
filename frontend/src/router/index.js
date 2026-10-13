@@ -16,7 +16,7 @@ const routes = [
   {
     path: '/',
     component: AppLayout,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresWedding: true },
     children: [
       { path: '', component: MainDesktopView },
       { path: 'guests', component: GuestsView },
@@ -37,13 +37,44 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const loggedIn = !!getAuthToken()
   if (to.meta.requiresAuth && !loggedIn) {
     return { path: '/login', query: { redirect: to.fullPath } }
   }
   if (to.meta.guestOnly && loggedIn) {
     return { path: '/' }
+  }
+  if (!loggedIn) {
+    return
+  }
+
+  const needsWeddingCheck = to.meta.requiresWedding || to.path === '/choose-wedding'
+  if (!needsWeddingCheck) {
+    return
+  }
+
+  const { useAuth } = await import('../composables/useAuth.js')
+  const { user, fetchUser } = useAuth()
+  if (!user.value) {
+    await fetchUser()
+  }
+  if (!user.value) {
+    return { path: '/login', query: { redirect: to.fullPath } }
+  }
+
+  const weddingsCount = user.value.weddings?.length ?? 0
+  if (to.meta.requiresWedding) {
+    if (weddingsCount === 0) {
+      return { path: '/create-wedding' }
+    }
+    if (weddingsCount > 1) {
+      return { path: '/choose-wedding' }
+    }
+    return
+  }
+  if (to.path === '/choose-wedding' && weddingsCount <= 1) {
+    return { path: weddingsCount === 0 ? '/create-wedding' : '/' }
   }
 })
 

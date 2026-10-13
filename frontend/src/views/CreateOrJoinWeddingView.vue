@@ -42,7 +42,7 @@ async function create() {
 async function join() {
   joinErrors.value = {}
   try {
-    await joinToWedding(invite_code.value, joinToWedding().value)
+    await joinToWedding(invite_code.value, joiningSelectedRole.value)
   } catch (e) {
     joinErrors.value = e.response?.data?.errors ?? {}
   }
@@ -53,23 +53,6 @@ async function join() {
 <template>
   <div class="auth-layout">
     <BrandBar show-menu-button @toggle-nav="mobileNavOpen = true">
-      <template #end>
-        <div class="brandBar-user-data">
-          <div>
-            <Avatar
-                :label="user?.name?.[0]?.toUpperCase() ?? '?'"
-                shape="circle"
-                class="user-avatar"
-            />
-            <span class="user-name">{{user?.role_label}} {{ user?.name }}</span>
-          </div>
-          <div class="user-invite-code">
-            <label>Kod wesela: </label>
-            <span>{{ user?.invite_code }}</span>
-          </div>
-        </div>
-        <Button label="Wyloguj" icon="pi pi-sign-out" class="logout-btn" @click="logout" />
-      </template>
     </BrandBar>
     <div class="auth-page">
       <Card class="auth-card">
@@ -102,6 +85,9 @@ async function join() {
                 />
                 <label for="user-role-confirmation">Rola</label>
               </FloatLabel>
+              <Message v-if="joinErrors.role" severity="error" size="small" variant="simple">
+                {{ joinErrors.role[0] }}
+              </Message>
             </div>
             <Button type="submit" :loading="isJoining" :label="isJoining ? 'Dołączanie…' : 'Dołącz do wesela'" fluid />
           </form>
@@ -157,6 +143,9 @@ async function join() {
                 />
                 <label for="user-role-confirmation">Rola</label>
               </FloatLabel>
+              <Message v-if="createErrors.role" severity="error" size="small" variant="simple">
+                {{ createErrors.role[0] }}
+              </Message>
             </div>
             <Button type="submit" :loading="isCreating" :label="isCreating ? 'Tworzenie…' : 'Stwórz wesele'" fluid />
           </form>

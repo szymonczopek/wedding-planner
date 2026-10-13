@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { RouterView } from 'vue-router'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
@@ -10,6 +10,15 @@ import { useAuth } from '../composables/useAuth.js'
 
 const { user, logout } = useAuth()
 const mobileNavOpen = ref(false)
+
+const weddings = computed(() => user.value?.weddings ?? [])
+
+const selectedWedding = computed(() =>
+    weddings.value.find((w) => w.pivot?.selected) ?? weddings.value[0] ?? null
+)
+
+const roleLabel = computed(() => selectedWedding.value?.pivot?.role_label ?? '')
+
 </script>
 
 <template>
@@ -25,9 +34,13 @@ const mobileNavOpen = ref(false)
             />
             <span class="user-name">{{user?.role_label}} {{ user?.name }}</span>
           </div>
+          <div class="user-role">
+            <label>Rola: </label>
+            <span>{{ roleLabel }}</span>
+          </div>
           <div class="user-invite-code">
             <label>Kod wesela: </label>
-            <span>{{ user?.invite_code }}</span>
+            <span>{{ selectedWedding.invite_code }}</span>
           </div>
         </div>
         <Button label="Wyloguj" icon="pi pi-sign-out" class="logout-btn" @click="logout" />
@@ -58,9 +71,9 @@ const mobileNavOpen = ref(false)
   flex-direction: column;
 }
 
-.user-name, .user-invite-code {
+.user-name, .user-invite-code, .user-role {
   font-weight: 600;
-  margin: 0 0.25rem;
+  margin: 0.25rem 0.25rem;
   color: #000000;
 }
 
