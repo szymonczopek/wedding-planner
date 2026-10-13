@@ -50,7 +50,7 @@ class AuthController extends Controller
         return response()->json(['success' => $this->loginService->userLogout($request)]);
     }
 
-    public function me(Request $request): JsonResponse
+    public function authUser(Request $request): JsonResponse
     {
         return response()->json($request->user()->load('weddings'));
     }

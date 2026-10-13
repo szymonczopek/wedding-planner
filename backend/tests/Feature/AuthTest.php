@@ -46,7 +46,7 @@ class AuthTest extends TestCase
         $token = $login->json('token');
         $this->assertNotEmpty($token);
 
-        $this->getJson('/api/me', ['Authorization' => "Bearer {$token}"])
+        $this->getJson('/api/user', ['Authorization' => "Bearer {$token}"])
             ->assertOk()
             ->assertJsonPath('email', 'example1@wp.pl');
     }
@@ -67,7 +67,7 @@ class AuthTest extends TestCase
 
     public function test_me_requires_authentication(): void
     {
-        $this->getJson('/api/me')->assertUnauthorized();
+        $this->getJson('/api/user')->assertUnauthorized();
     }
 
     public function test_logout_revokes_current_token(): void
@@ -82,7 +82,7 @@ class AuthTest extends TestCase
 
         $headers = ['Authorization' => "Bearer {$token}"];
 
-        $this->getJson('/api/me', $headers)->assertOk();
+        $this->getJson('/api/user', $headers)->assertOk();
 
         $this->postJson('/api/logout', [], $headers)
             ->assertOk()
@@ -93,7 +93,7 @@ class AuthTest extends TestCase
 
     public function test_me_rejects_unknown_token(): void
     {
-        $this->getJson('/api/me', ['Authorization' => 'Bearer 999|bogus'])
+        $this->getJson('/api/user', ['Authorization' => 'Bearer 999|bogus'])
             ->assertUnauthorized();
     }
 }
