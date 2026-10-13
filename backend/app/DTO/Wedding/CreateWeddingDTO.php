@@ -12,7 +12,7 @@ readonly class CreateWeddingDTO
         public string $name,
         public ?string $date,
         public UserRolesEnum $role,
-        public bool $is_active,
+        public bool $selected,
         public string $invite_code,
     ) {}
 
@@ -25,7 +25,7 @@ readonly class CreateWeddingDTO
             name: $data['name'],
             date: $data['date'] ?? null,
             role: UserRolesEnum::from($data['role']),
-            is_active: true,
+            selected: true,
             invite_code: self::generateInviteCode(),
         );
     }
@@ -39,7 +39,7 @@ readonly class CreateWeddingDTO
             'name' => $this->name,
             'date' => $this->date,
             'role' => $this->role->value,
-            'is_active' => $this->is_active,
+            'selected' => $this->selected,
             'invite_code' => $this->invite_code,
         ];
     }

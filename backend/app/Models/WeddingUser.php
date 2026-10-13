@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static static create(array<string, mixed> $attributes = [])
  * @method static Builder|WeddingUser where(string|array|\Closure $column, mixed $operator = null, mixed $value = null)
  */
-#[Fillable(['user_id', 'wedding_id', 'role', 'is_active'])]
+#[Fillable(['user_id', 'wedding_id', 'role', 'selected'])]
 class WeddingUser extends Pivot
 {
     use HasUuids;

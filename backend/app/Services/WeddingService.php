@@ -25,7 +25,7 @@ class WeddingService
 
             auth()->user()->weddings()->save($wedding, [
                 'role' => $weddingDTO->role->value,
-                'is_active' => $weddingDTO->is_active,
+                'selected' => $weddingDTO->selected,
             ]);
 
             return $wedding;

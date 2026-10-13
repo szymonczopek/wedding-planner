@@ -33,7 +33,7 @@ Table wedding_user {
   wedding_id varchar [ref: > weddings.id, not null]
 
   role varchar
-  is_active bool
+  selected bool
 
   created_at timestamp
   updated_at timestamp

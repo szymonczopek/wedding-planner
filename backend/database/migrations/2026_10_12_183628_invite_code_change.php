@@ -22,7 +22,7 @@ return new class extends Migration
         });
 
         Schema::table('wedding_user', function (Blueprint $table) {
-            $table->boolean('is_active')->default(false);
+            $table->boolean('selected')->default(false);
             $table->enum('role', array_column(UserRolesEnum::cases(), 'value'))->default(UserRolesEnum::WEDDING_PLANNER->value);
         });
     }
