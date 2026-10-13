@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-#[Hidden(['id', 'created_at', 'updated_at'])]
 #[Fillable(['name', 'date', 'created_by', 'invite_code'])]
+#[Hidden(['id', 'created_at', 'updated_at'])]
 class Wedding extends Model
 {
     use HasUuids, SoftDeletes;
@@ -45,7 +45,7 @@ class Wedding extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'wedding_user', 'wedding_id', 'user_id')->using(WeddingUser::class)->withPivot(['id', 'role', 'is_active'])->withTimestamps();
+        return $this->belongsToMany(User::class, 'wedding_user', 'wedding_id', 'user_id')->using(WeddingUser::class)->withPivot(['id', 'role', 'selected'])->withTimestamps();
     }
 
     public function weddingUsers(): HasMany

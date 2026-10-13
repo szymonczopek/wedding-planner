@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
 #[Fillable(['wedding_id', 'created_by', 'name', 'capacity', 'position_x', 'position_y', 'width', 'height', 'radius'])]
+#[Hidden(['created_by'])]
 class Table extends Model
 {
     use HasUuids, SoftDeletes;

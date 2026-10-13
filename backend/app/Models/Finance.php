@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
 #[Fillable(['wedding_id', 'created_by', 'name', 'amount', 'category', 'contact', 'payment_deadline', 'payment_status', 'note'])]
+#[Hidden(['created_by'])]
 class Finance extends Model
 {
     use HasUuids, SoftDeletes;
