@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Wedding;
 
 use App\DTO\Wedding\CreateWeddingDTO;
-use App\Http\Requests\WeddingFormRequest;
+use App\Http\Requests\Wedding\ChooseWeddingFormRequest;
+use App\Http\Requests\Wedding\CreateWeddingFormRequest;
 use App\Models\Wedding;
 use Illuminate\Support\Facades\DB;
 
@@ -12,7 +13,7 @@ class WeddingService
     /**
      * @throws \Throwable
      */
-    public function createWedding(WeddingFormRequest $request): Wedding
+    public function createWedding(CreateWeddingFormRequest $request): Wedding
     {
         return DB::transaction(function () use ($request) {
             $weddingDTO = CreateWeddingDTO::fromRequest($request->validated());
@@ -31,4 +32,9 @@ class WeddingService
             return $wedding;
         });
     }
+
+//    public function chooseWedding(chooseWeddingFormRequest $request)
+//    {
+//
+//    }
 }

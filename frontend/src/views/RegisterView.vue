@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import {ref} from 'vue'
+import {RouterLink} from 'vue-router'
 import Card from 'primevue/card'
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
@@ -8,9 +8,9 @@ import Password from 'primevue/password'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import BrandBar from '../components/BrandBar.vue'
-import { useAuth } from '../composables/useAuth.js'
+import {useAuth} from '../composables/useAuth.js'
 
-const { register, isLoading } = useAuth()
+const {register, isLoading} = useAuth()
 
 const name = ref('')
 const email = ref('')
@@ -31,86 +31,87 @@ async function onSubmit() {
 
 <template>
   <div class="auth-layout">
-    <BrandBar />
+    <BrandBar/>
     <div class="auth-page">
       <Card class="auth-card">
-      <template #title>Rejestracja</template>
-      <template #subtitle>Załóż konto i zacznij planować swój ślub w Wedding Planner</template>
-      <template #content>
-        <form class="auth-form" @submit.prevent="onSubmit()">
-          <div class="field-group">
-            <FloatLabel variant="on">
-              <InputText
-                id="register-name"
-                v-model="name"
-                type="text"
-                required
-                autocomplete="username"
-                :invalid="!!errors.name"
-                fluid
-              />
-              <label for="register-name">Nazwa użytkownika</label>
-            </FloatLabel>
-            <Message v-if="errors.name" severity="error" size="small" variant="simple">
-              {{ errors.name[0] }}
-            </Message>
-          </div>
-          <div class="field-group">
-            <FloatLabel variant="on">
-              <InputText
-                id="register-email"
-                v-model="email"
-                type="email"
-                required
-                autocomplete="email"
-                :invalid="!!errors.email"
-                fluid
-              />
-              <label for="register-email">Email</label>
-            </FloatLabel>
-            <Message v-if="errors.email" severity="error" size="small" variant="simple">
-              {{ errors.email[0] }}
-            </Message>
-          </div>
-          <div class="field-group">
-            <FloatLabel variant="on">
-              <Password
-                id="register-password"
-                v-model="password"
-                required
-                autocomplete="new-password"
-                toggleMask
-                :invalid="!!errors.password"
-                fluid
-              />
-              <label for="register-password">Hasło</label>
-            </FloatLabel>
-            <Message v-if="errors.password" severity="error" size="small" variant="simple">
-              {{ errors.password[0] }}
-            </Message>
-          </div>
-          <FloatLabel variant="on">
-            <Password
-              id="register-password-confirmation"
-              v-model="passwordConfirmation"
-              required
-              autocomplete="new-password"
-              :feedback="false"
-              toggleMask
-              fluid
-            />
-            <label for="register-password-confirmation">Powtórz hasło</label>
-          </FloatLabel>
-          <Button type="submit" :loading="isLoading" :label="isLoading ? 'Rejestracja…' : 'Załóż konto'" fluid />
-        </form>
-      </template>
-      <template #footer>
-        <p class="auth-switch">
-          Masz już konto?
-          <RouterLink to="/login">Zaloguj się</RouterLink>
-        </p>
-      </template>
-    </Card>
+        <template #title>Rejestracja</template>
+        <template #subtitle>Załóż konto i zacznij planować swój ślub w Wedding Planner</template>
+        <template #content>
+          <form class="auth-form" @submit.prevent="onSubmit()">
+            <div class="field-group">
+              <FloatLabel variant="on">
+                <InputText
+                    id="register-name"
+                    v-model="name"
+                    type="text"
+                    autocomplete="username"
+                    :invalid="!!errors.name"
+                    fluid
+                />
+                <label for="register-name">Nazwa użytkownika</label>
+              </FloatLabel>
+              <Message v-if="errors.name" severity="error" size="small" variant="simple">
+                {{ errors.name[0] }}
+              </Message>
+            </div>
+            <div class="field-group">
+              <FloatLabel variant="on">
+                <InputText
+                    id="register-email"
+                    v-model="email"
+                    type="email"
+                    autocomplete="email"
+                    :invalid="!!errors.email"
+                    fluid
+                />
+                <label for="register-email">Email</label>
+              </FloatLabel>
+              <Message v-if="errors.email" severity="error" size="small" variant="simple">
+                {{ errors.email[0] }}
+              </Message>
+            </div>
+            <div class="field-group">
+              <FloatLabel variant="on">
+                <Password
+                    id="register-password"
+                    v-model="password"
+                    autocomplete="new-password"
+                    toggleMask
+                    :invalid="!!errors.password"
+                    fluid
+                />
+                <label for="register-password">Hasło</label>
+              </FloatLabel>
+              <Message v-if="errors.password" severity="error" size="small" variant="simple">
+                {{ errors.password[0] }}
+              </Message>
+            </div>
+            <div class="field-group">
+              <FloatLabel variant="on">
+                <Password
+                    id="register-password-confirmation"
+                    v-model="passwordConfirmation"
+                    autocomplete="new-password"
+                    :feedback="false"
+                    toggleMask
+                    fluid
+                />
+                <label for="register-password-confirmation">Powtórz hasło</label>
+              </FloatLabel>
+              <Message v-if="errors.password" severity="error" size="small" variant="simple">
+                {{ errors.password[0] }}
+              </Message>
+            </div>
+            <Button type="submit" :loading="isLoading" :label="isLoading ? 'Rejestracja…' : 'Załóż konto'" fluid/>
+          </form>
+        </template>
+        <template #footer>
+          <p class="auth-switch">
+            Masz już konto?
+            <RouterLink to="/login">Zaloguj się</RouterLink>
+          </p>
+        </template>
+      </Card>
     </div>
   </div>
 </template>

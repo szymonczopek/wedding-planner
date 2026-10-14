@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\WeddingFormRequest;
-use App\Services\WeddingService;
+use App\Http\Requests\Wedding\CreateWeddingFormRequest;
+use App\Services\Wedding\WeddingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use OpenApi\Attributes as OA;
@@ -22,6 +22,9 @@ class WeddingController extends Controller
         $this->weddingService = $weddingService;
     }
 
+    /**
+     * @throws \Throwable
+     */
     #[OA\Post(
         path: '/api/weddings/create',
         summary: 'Endpoint testowy',
@@ -29,7 +32,7 @@ class WeddingController extends Controller
             new OA\Response(response: 200, description: 'OK'),
         ]
     )]
-    public function create(WeddingFormRequest $request): JsonResponse
+    public function create(CreateWeddingFormRequest $request): JsonResponse
     {
         return response()->json($this->weddingService->createWedding($request), 201);
     }

@@ -53,6 +53,9 @@ async function join() {
 <template>
   <div class="auth-layout">
     <BrandBar show-menu-button @toggle-nav="mobileNavOpen = true">
+      <template #end>
+        <Button label="Wyloguj" icon="pi pi-sign-out" class="logout-btn" @click="logout" />
+      </template>
     </BrandBar>
     <div class="auth-page">
       <Card class="auth-card">
@@ -65,7 +68,6 @@ async function join() {
                     id="invite_code"
                     v-model="invite_code"
                     type="text"
-                    required
                     :invalid="!!joinErrors.invite_code"
                     fluid
                 />
@@ -80,7 +82,6 @@ async function join() {
                     :options="roles"
                     optionLabel="label"
                     optionValue="key"
-                    required
                     fluid
                 />
                 <label for="user-role-confirmation">Rola</label>
@@ -105,7 +106,6 @@ async function join() {
                     id="wedding-name"
                     v-model="name"
                     type="text"
-                    required
                     autocomplete="username"
                     :invalid="!!createErrors.name"
                     fluid
@@ -138,7 +138,6 @@ async function join() {
                     :options="roles"
                     optionLabel="label"
                     optionValue="key"
-                    required
                     fluid
                 />
                 <label for="user-role-confirmation">Rola</label>

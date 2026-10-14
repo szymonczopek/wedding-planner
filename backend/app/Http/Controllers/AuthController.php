@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginFormRequest;
-use App\Http\Requests\RegisterFormRequest;
+use App\Http\Requests\Auth\LoginFormRequest;
+use App\Http\Requests\Auth\RegisterFormRequest;
 use App\Services\Auth\AuthLoginService;
 use App\Services\Auth\AuthRegisterService;
 use Illuminate\Http\JsonResponse;

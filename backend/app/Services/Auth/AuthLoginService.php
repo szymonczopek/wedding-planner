@@ -2,7 +2,7 @@
 
 namespace App\Services\Auth;
 
-use App\Http\Requests\LoginFormRequest;
+use App\Http\Requests\Auth\LoginFormRequest;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
@@ -22,7 +22,7 @@ class AuthLoginService
     {
         if (! Auth::attempt($request->validated())) {
             throw ValidationException::withMessages([
-                'email' => ['Incorrect login data.'],
+                'email' => ['Niepoprawne dane logowania'],
             ]);
         }
 

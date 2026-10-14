@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Wedding;
 
 use App\Enums\UserRolesEnum;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
-class WeddingFormRequest extends FormRequest
+class CreateWeddingFormRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.

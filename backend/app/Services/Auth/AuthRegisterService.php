@@ -3,7 +3,7 @@
 namespace App\Services\Auth;
 
 use App\DTO\User\RegisterUserDTO;
-use App\Http\Requests\RegisterFormRequest;
+use App\Http\Requests\Auth\RegisterFormRequest;
 use App\Models\User;
 
 class AuthRegisterService

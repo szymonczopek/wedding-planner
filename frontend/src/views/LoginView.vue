@@ -36,14 +36,13 @@ async function onSubmit() {
       <template #content>
         <form class="auth-form" @submit.prevent="onSubmit">
           <FloatLabel variant="on">
-            <InputText id="login-email" v-model="email" type="email" required autocomplete="email" fluid />
+            <InputText id="login-email" v-model="email" type="email" autocomplete="email" fluid />
             <label for="login-email">Email</label>
           </FloatLabel>
           <FloatLabel variant="on">
             <Password
               id="login-password"
               v-model="password"
-              required
               autocomplete="current-password"
               :feedback="false"
               toggleMask
