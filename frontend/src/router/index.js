@@ -49,33 +49,39 @@ router.beforeEach(async (to) => {
     return
   }
 
-  const needsWeddingCheck = to.meta.requiresWedding || to.path === '/choose-wedding'
-  if (!needsWeddingCheck) {
-    return
-  }
-
   const { useAuth } = await import('../composables/useAuth.js')
   const { user, fetchUser } = useAuth()
   if (!user.value) {
     await fetchUser()
   }
+
   if (!user.value) {
     return { path: '/login', query: { redirect: to.fullPath } }
   }
 
-  const weddingsCount = user.value.weddings?.length ?? 0
-  if (to.meta.requiresWedding) {
-    if (weddingsCount === 0) {
-      return { path: '/create-wedding' }
+  const selectedWeddings = user.value.weddings ?? []
+  const totalWeddings = user.value.weddings_count ?? 0
+  const hasSelectedWedding = selectedWeddings.length > 0
+
+  if (to.path === '/create-wedding') {
+    return
+  }
+
+  if (to.path === '/choose-wedding') {
+    if (hasSelectedWedding) {
+      return { path: '/' }
     }
-    if (weddingsCount > 1) {
-      return { path: '/choose-wedding' }
+    if (totalWeddings === 0) {
+      return { path: '/create-wedding' }
     }
     return
   }
-  if (to.path === '/choose-wedding' && weddingsCount <= 1) {
-    return { path: weddingsCount === 0 ? '/create-wedding' : '/' }
+
+  if (!hasSelectedWedding) {
+    return { path: totalWeddings === 0 ? '/create-wedding' : '/choose-wedding' }
   }
+
+  return
 })
 
 export default router

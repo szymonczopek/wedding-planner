@@ -25,7 +25,7 @@ const joiningSelectedRole = ref(null);
 const creatingSelectedRole = ref(null);
 const roles = ref([
   { label: 'Pan młody', key: 'groom' },
-  { label: 'Pani młoda', key: 'bride' },
+  { label: 'Panna młoda', key: 'bride' },
   { label: 'Konsultant ślubny', key: 'wedding_planner' }
 ]);
 

@@ -3,8 +3,8 @@
 namespace App\Http\Requests\Wedding;
 
 use App\Enums\UserRolesEnum;
-use Illuminate\Contracts\Validation\ValidationRule;
 use App\Http\Requests\FormRequest;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rules\Enum;
 
 class CreateWeddingFormRequest extends FormRequest

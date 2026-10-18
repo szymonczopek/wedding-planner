@@ -6,7 +6,6 @@ import 'primeicons/primeicons.css'
 import './assets/main.css'
 import App from './App.vue'
 import router from './router/index.js'
-import { useAuth } from './composables/useAuth.js'
 
 const GoldPreset = definePreset(Aura, {
   semantic: {
@@ -30,7 +29,4 @@ const app = createApp(App)
 app.use(PrimeVue, { theme: { preset: GoldPreset } })
 app.use(router)
 
-const { fetchUser } = useAuth()
-fetchUser().finally(() => {
-  app.mount('#app')
-})
+app.mount('#app')

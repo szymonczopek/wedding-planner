@@ -6,6 +6,8 @@ use App\DTO\Wedding\CreateWeddingDTO;
 use App\Http\Requests\Wedding\ChooseWeddingFormRequest;
 use App\Http\Requests\Wedding\CreateWeddingFormRequest;
 use App\Models\Wedding;
+use App\Models\WeddingUser;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class WeddingService
@@ -16,6 +18,8 @@ class WeddingService
     public function createWedding(CreateWeddingFormRequest $request): Wedding
     {
         return DB::transaction(function () use ($request) {
+            $this->unselectWeddings();
+
             $weddingDTO = CreateWeddingDTO::fromRequest($request->validated());
 
             $wedding = Wedding::create([
@@ -33,8 +37,15 @@ class WeddingService
         });
     }
 
-//    public function chooseWedding(chooseWeddingFormRequest $request)
-//    {
-//
-//    }
+    public function unselectWeddings(): void
+    {
+        WeddingUser::where('user_id', Auth::id())
+            ->where('selected', true)
+            ->update(['selected' => false]);
+    }
+
+    //    public function chooseWedding(chooseWeddingFormRequest $request)
+    //    {
+    //
+    //    }
 }

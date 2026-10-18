@@ -6,6 +6,7 @@ use App\Http\Requests\Auth\LoginFormRequest;
 use App\Http\Requests\Auth\RegisterFormRequest;
 use App\Services\Auth\AuthLoginService;
 use App\Services\Auth\AuthRegisterService;
+use App\Services\User\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -22,10 +23,13 @@ class AuthController extends Controller
 
     private AuthLoginService $loginService;
 
-    public function __construct(AuthRegisterService $registerService, AuthLoginService $loginService)
+    private UserService $userService;
+
+    public function __construct(AuthRegisterService $registerService, AuthLoginService $loginService, UserService $userService)
     {
         $this->registerService = $registerService;
         $this->loginService = $loginService;
+        $this->userService = $userService;
     }
 
     #[OA\Post(
@@ -50,8 +54,13 @@ class AuthController extends Controller
         return response()->json(['success' => $this->loginService->userLogout($request)]);
     }
 
-    public function authUser(Request $request): JsonResponse
+    public function authUserWithWeddings(Request $request): JsonResponse
     {
         return response()->json($request->user()->load('weddings'));
+    }
+
+    public function authUserWedding(Request $request): JsonResponse
+    {
+        return response()->json($this->userService->userWithSelectedWedding($request), 200);
     }
 }

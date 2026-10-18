@@ -4,7 +4,7 @@ namespace App\Services\Auth;
 
 use App\Http\Requests\Auth\LoginFormRequest;
 use App\Models\User;
-use App\Models\WeddingUser;
+use App\Services\Wedding\WeddingService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\StatefulGuard;
@@ -16,6 +16,13 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthLoginService
 {
+    private WeddingService $weddingService;
+
+    public function __construct(WeddingService $weddingService)
+    {
+        $this->weddingService = $weddingService;
+    }
+
     /**
      * @return array{user: User|Authenticatable, token: string}
      */
@@ -44,7 +51,7 @@ class AuthLoginService
             return false;
         }
 
-        $this->unselectWeddings();
+        $this->weddingService->unselectWeddings();
 
         /** @var HasAbilities|null $accessToken */
         $accessToken = $user->currentAccessToken();
@@ -76,15 +83,5 @@ class AuthLoginService
         }
 
         return true;
-    }
-
-    /**
-     * @return void
-     */
-    public function unselectWeddings(): void
-    {
-        WeddingUser::where('user_id', Auth::id())
-            ->where('selected', true)
-            ->update(['selected' => false]);
     }
 }

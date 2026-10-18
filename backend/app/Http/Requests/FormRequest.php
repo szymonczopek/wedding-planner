@@ -10,10 +10,10 @@ abstract class FormRequest extends FrameworkFormRequest
     {
         return [
             'required' => 'Wypełnij to pole',
-            'string'   => 'Wartość musi być tekstem',
-            'email.unique'    => 'Ten adres e-mail posiada już konto',
-            'date'     => 'Podaj datę',
-            'password.confirmed' => 'Powtórz hasło'
+            'string' => 'Wartość musi być tekstem',
+            'email.unique' => 'Ten adres e-mail posiada już konto',
+            'date' => 'Podaj datę',
+            'password.confirmed' => 'Powtórz hasło',
         ];
     }
 

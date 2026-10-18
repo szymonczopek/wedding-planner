@@ -12,7 +12,7 @@ enum UserRolesEnum: string
     {
         return match ($this) {
             self::GROOM => 'Pan młody',
-            self::BRIDE => 'Pani młoda',
+            self::BRIDE => 'Panna młoda',
             self::WEDDING_PLANNER => 'Konsultant ślubny',
         };
     }

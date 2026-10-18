@@ -18,6 +18,7 @@ const selectedWedding = computed(() =>
 )
 
 const roleLabel = computed(() => selectedWedding.value?.pivot?.role_label ?? '')
+const weddingName = computed(() => selectedWedding.value?.name ?? '')
 
 </script>
 
@@ -34,13 +35,16 @@ const roleLabel = computed(() => selectedWedding.value?.pivot?.role_label ?? '')
             />
             <span class="user-name">{{user?.role_label}} {{ user?.name }}</span>
           </div>
+          <div class="wedding-name">
+            <span>{{ weddingName }}</span>
+          </div>
           <div class="user-role">
             <label>Rola: </label>
             <span>{{ roleLabel }}</span>
           </div>
           <div class="user-invite-code">
             <label>Kod wesela: </label>
-            <span>{{ selectedWedding.invite_code }}</span>
+            <span>{{ selectedWedding?.invite_code }}</span>
           </div>
         </div>
         <Button label="Wyloguj" icon="pi pi-sign-out" class="logout-btn" @click="logout" />
@@ -71,7 +75,7 @@ const roleLabel = computed(() => selectedWedding.value?.pivot?.role_label ?? '')
   flex-direction: column;
 }
 
-.user-name, .user-invite-code, .user-role {
+.user-name, .user-invite-code, .user-role, .wedding-name {
   font-weight: 600;
   margin: 0.25rem 0.25rem;
   color: #000000;
@@ -93,10 +97,6 @@ const roleLabel = computed(() => selectedWedding.value?.pivot?.role_label ?? '')
   color: var(--p-menu-item-focus-color, var(--p-text-color));
 }
 
-.user-invite-code {
-  color: black;
-}
-
 .app-body {
   flex: 1;
   display: flex;
@@ -107,7 +107,6 @@ const roleLabel = computed(() => selectedWedding.value?.pivot?.role_label ?? '')
   width: 16rem;
   flex-shrink: 0;
   padding: 1rem 0.75rem;
-  //border-right: 1px solid var(--p-content-border-color);
 }
 
 .app-content {

@@ -14,22 +14,21 @@ export function useAuth() {
             const {data} = await api.post('/login', {email, password})
             setAuthToken(data.token)
 
-            user.value = data.user
-            await router.push('/')
+            const {data: me} = await api.get('/user-with-weddings')
+            const allWeddings = me.weddings ?? []
+            const hasSelectedWedding = allWeddings.some((w) => w.pivot?.selected === true)
+
+            user.value = null
+
+            if (hasSelectedWedding) {
+                await router.push('/')
+            } else if (allWeddings.length > 0) {
+                await router.push('/choose-wedding')
+            } else {
+                await router.push('/create-wedding')
+            }
         } finally {
             isLoading.value = false
-        }
-    }
-
-    async function resolveWedding(weddings) {
-        const weddingsCount = weddings?.length || 0
-
-        if (weddingsCount === 0) {
-            await router.push('/create-wedding')
-        } else if (weddingsCount > 1) {
-            await router.push('/choose-wedding')
-        } else {
-            await router.push('/')
         }
     }
 
@@ -38,7 +37,7 @@ export function useAuth() {
         try {
             const {data} = await api.post('/register', {name, email, password, password_confirmation})
             setAuthToken(data.token)
-            user.value = data.user
+            user.value = null
             await router.push('/')
         } finally {
             isLoading.value = false
@@ -60,7 +59,7 @@ export function useAuth() {
     async function fetchUser() {
         if (!getAuthToken()) return
         try {
-            const {data} = await api.get('/user')
+            const {data} = await api.get('/wedding-user')
             user.value = data
         } catch {
             clearAuthToken()
@@ -68,6 +67,5 @@ export function useAuth() {
         }
     }
 
-
-    return {user, isAuthenticated, isLoading, login, register, logout, fetchUser, resolveWedding}
+    return {user, isAuthenticated, isLoading, login, register, logout, fetchUser}
 }
