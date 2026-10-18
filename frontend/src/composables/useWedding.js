@@ -17,7 +17,6 @@ async function createWedding(name, date, selectedRole) {
     } finally {
         isCreating.value = false
     }
-
 }
 
 async function joinToWedding(inviteCode, selectedRole) {

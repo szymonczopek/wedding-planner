@@ -4,6 +4,7 @@ namespace App\Services\Auth;
 
 use App\Http\Requests\Auth\LoginFormRequest;
 use App\Models\User;
+use App\Models\WeddingUser;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\StatefulGuard;
@@ -43,6 +44,8 @@ class AuthLoginService
             return false;
         }
 
+        $this->unselectWeddings();
+
         /** @var HasAbilities|null $accessToken */
         $accessToken = $user->currentAccessToken();
 
@@ -73,5 +76,15 @@ class AuthLoginService
         }
 
         return true;
+    }
+
+    /**
+     * @return void
+     */
+    public function unselectWeddings(): void
+    {
+        WeddingUser::where('user_id', Auth::id())
+            ->where('selected', true)
+            ->update(['selected' => false]);
     }
 }

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-#[Fillable(['name', 'date', 'created_by', 'invite_code'])]
+#[Fillable(['name', 'date', 'created_by', 'invite_code', 'selected'])]
 #[Hidden(['id', 'created_at', 'updated_at'])]
 class Wedding extends Model
 {
