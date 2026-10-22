@@ -10,7 +10,7 @@ import FinancesView from "../views/FinancesView.vue";
 import CalendarView from "../views/CalendarView.vue";
 import WeddingDayView from "../views/WeddingDayView.vue";
 import CreateOrJoinWeddingView from "../views/CreateOrJoinWeddingView.vue";
-import ChooseWedding from "../views/ChooseWedding.vue";
+import ChooseWeddingView from "../views/ChooseWeddingView.vue";
 
 const routes = [
   {
@@ -29,7 +29,7 @@ const routes = [
   { path: '/login', component: LoginView, meta: { guestOnly: true } },
   { path: '/register', component: RegisterView, meta: { guestOnly: true } },
   { path: '/create-wedding', component: CreateOrJoinWeddingView, meta: { requiresAuth: true } },
-  { path: '/choose-wedding', component: ChooseWedding, meta: { requiresAuth: true } },
+  { path: '/choose-wedding', component: ChooseWeddingView, meta: { requiresAuth: true } },
 ]
 
 const router = createRouter({
@@ -68,9 +68,6 @@ router.beforeEach(async (to) => {
   }
 
   if (to.path === '/choose-wedding') {
-    if (hasSelectedWedding) {
-      return { path: '/' }
-    }
     if (totalWeddings === 0) {
       return { path: '/create-wedding' }
     }

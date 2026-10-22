@@ -155,16 +155,6 @@ async function join() {
 </template>
 
 <style scoped>
-.user-name, .user-invite-code {
-  font-weight: 600;
-  margin: 0 0.25rem;
-  color: #000000;
-}
-
-.brandBar-user-data {
-  text-align: center;
-}
-
 .auth-layout {
   min-height: 100vh;
   display: flex;
@@ -196,11 +186,5 @@ async function join() {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-}
-
-.auth-switch {
-  margin: 0;
-  text-align: center;
-  font-size: 0.92rem;
 }
 </style>

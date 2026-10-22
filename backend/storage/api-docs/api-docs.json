@@ -8,6 +8,9 @@
     "paths": {
         "/api/register": {
             "post": {
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Endpoint testowy",
                 "operationId": "8a56853624e025573120a09a4c75d468",
                 "responses": {
@@ -16,6 +19,133 @@
                     }
                 }
             }
+        },
+        "/api/weddings/create": {
+            "post": {
+                "tags": [
+                    "Wedding"
+                ],
+                "summary": "Endpoint testowy",
+                "operationId": "16a203cb7191a0e7026b47494ae0f4fd",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/weddings/join-wedding": {
+            "post": {
+                "tags": [
+                    "Wedding"
+                ],
+                "summary": "Dołącz do wesela za pomocą kodu zaproszenia",
+                "operationId": "4f497ecc368632a0d925e69de4395155",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "invite_code"
+                                ],
+                                "properties": {
+                                    "invite_code": {
+                                        "description": "Kod zaproszenia do wesela",
+                                        "type": "string",
+                                        "example": "ABC123"
+                                    },
+                                    "role": {
+                                        "description": "Rola",
+                                        "type": "string",
+                                        "example": "wedding_planner"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pomyślnie dołączono do wesela",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Wesele Anny i Jana"
+                                        },
+                                        "date": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2026-06-20T15:00:00.000000Z",
+                                            "nullable": true
+                                        },
+                                        "invite_code": {
+                                            "type": "string",
+                                            "example": "ABC123"
+                                        },
+                                        "selected": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Brak autoryzacji"
+                    },
+                    "422": {
+                        "description": "Błąd walidacji",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "invite_code": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "Nie istnieje taki kod zaproszenia"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
-    }
+    },
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "description": "Token Sanctum w nagłówku Authorization: Bearer {token}",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Rejestracja i logowanie"
+        },
+        {
+            "name": "Wedding",
+            "description": "Operacje na weselach"
+        }
+    ]
 }

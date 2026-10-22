@@ -12,7 +12,7 @@ class UserService
         return $request->user()
             ->loadCount('weddings')
             ->load([
-                'weddings' => fn($q) => $q->wherePivot('selected', true),
+                'weddings' => fn ($q) => $q->wherePivot('selected', true),
             ]);
     }
 }

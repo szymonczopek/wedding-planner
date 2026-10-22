@@ -37,6 +37,10 @@ class AuthLoginService
         /** @var User $user */
         $user = Auth::user();
 
+        if ($user->weddings()->count() === 1) {
+            $this->weddingService->selectWeddings();
+        }
+
         return [
             'user' => $user->load('weddings'),
             'token' => $user->createToken('auth-token')->plainTextToken,

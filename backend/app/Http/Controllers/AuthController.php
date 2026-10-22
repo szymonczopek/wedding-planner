@@ -17,6 +17,14 @@ use OpenApi\Attributes as OA;
     description: 'API',
     title: 'Wedding Planner Laravel API'
 )]
+#[OA\SecurityScheme(
+    securityScheme: 'sanctum',
+    type: 'http',
+    description: 'Token Sanctum w nagłówku Authorization: Bearer {token}',
+    bearerFormat: 'JWT',
+    scheme: 'bearer'
+)]
+#[OA\Tag(name: 'Auth', description: 'Rejestracja i logowanie')]
 class AuthController extends Controller
 {
     private AuthRegisterService $registerService;
@@ -35,6 +43,7 @@ class AuthController extends Controller
     #[OA\Post(
         path: '/api/register',
         summary: 'Endpoint testowy',
+        tags: ['Auth'],
         responses: [
             new OA\Response(response: 200, description: 'OK'),
         ]

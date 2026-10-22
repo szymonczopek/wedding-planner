@@ -25,5 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('/weddings')->group(function () {
         Route::post('/create', [WeddingController::class, 'create']);
+        Route::post('/join', [WeddingController::class, 'join']);
+        Route::post('/choose', [WeddingController::class, 'choose']);
     });
 });
