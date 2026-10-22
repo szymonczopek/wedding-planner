@@ -69,6 +69,8 @@ class WeddingService
 
     public function chooseWedding(ChooseWeddingFormRequest $request): bool
     {
-        return Wedding::findOrFail($request->validated()['wedding_id'])->update(['selected' => true]);
+        $this->unselectWeddings();
+
+        return (bool) WeddingUser::where(['wedding_id' => $request->validated()['wedding_id'], 'user_id' => auth()->user()->id])->update(['selected' => true]);
     }
 }

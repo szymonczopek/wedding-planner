@@ -71,6 +71,10 @@ router.beforeEach(async (to) => {
     if (totalWeddings === 0) {
       return { path: '/create-wedding' }
     }
+
+    if (totalWeddings === 1) {
+      return { path: '/' }
+    }
     return
   }
 

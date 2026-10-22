@@ -1,26 +1,32 @@
 <script setup>
-import {ref} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import Button from 'primevue/button'
 import BrandBar from '../components/BrandBar.vue'
 import {useAuth} from '../composables/useAuth.js'
 import {useWedding} from '../composables/useWedding.js'
 import Card from "primevue/card";
 
-const {user, logout} = useAuth()
+const {logout, getUserWithWeddings} = useAuth()
 const {chooseWedding} = useWedding()
 
 const mobileNavOpen = ref(false)
 const name = ref('')
 const invite_code = ref('')
 const date = ref(null)
-const wedding_id = ref(null)
-const weddings = ref()
+const userWithWeddings = ref(null)
+const chooseErrors = ref({})
+
+onMounted(async () => {
+  userWithWeddings.value = await getUserWithWeddings()
+})
+
+const weddings = computed(() => userWithWeddings.value?.weddings ?? [])
 
 console.log(weddings)
-async function choose(wedding_id) {
+async function choose(id) {
   chooseErrors.value = {}
   try {
-    await chooseWedding(wedding_id.value)
+    await chooseWedding(id)
   } catch (e) {
     chooseErrors.value = e.response?.data?.errors ?? {}
   }
@@ -39,9 +45,10 @@ async function choose(wedding_id) {
       <Card class="choose-card">
         <template #title>Wybierz wesele</template>
         <template #content>
-          <span v-for="(item, index) in weddings" :key="index">
-            item.name
-          </span>
+          <p v-for="(item, index) in weddings" :key="item.id ?? index">
+              {{ item.name }}
+              <Button label="Wybierz" @click="choose(item.pivot.wedding_id)" />
+          </p>
         </template>
       </Card>
     </div>
