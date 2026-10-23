@@ -40,7 +40,7 @@ export function useWedding() {
             await fetchUser()
             await router.push('/')
         } finally {
-            chooseWedding.value = false
+            isChoosing.value = false
         }
     }
 

@@ -39,7 +39,7 @@ defineEmits(['toggle-nav'])
   border-left: none;
   border-right: none;
   border-top: none;
-  height: 130px;
+  height: 140px;
   background: var(--gold);
 }
 

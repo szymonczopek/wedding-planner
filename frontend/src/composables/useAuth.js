@@ -8,7 +8,7 @@ const isLoading = ref(false)
 export function useAuth() {
     const isAuthenticated = computed(() => user.value !== null)
 
-    async function getUserWithWeddings() {
+    async function getUserWithAllWeddings() {
         const {data} = await api.get('/user-with-weddings')
         return data
     }
@@ -19,7 +19,7 @@ export function useAuth() {
             const {data} = await api.post('/login', {email, password})
             setAuthToken(data.token)
 
-            const me = await getUserWithWeddings()
+            const me = await getUserWithAllWeddings()
             const allWeddings = me.weddings ?? []
             const hasSelectedWedding = allWeddings.some((w) => w.pivot?.selected === true)
 
@@ -72,5 +72,5 @@ export function useAuth() {
         }
     }
 
-    return {user, isAuthenticated, isLoading, login, register, logout, fetchUser, getUserWithWeddings}
+    return {user, isAuthenticated, isLoading, login, register, logout, fetchUser, getUserWithAllWeddings}
 }

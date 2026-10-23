@@ -25,7 +25,7 @@ class Wedding extends Model
     protected function casts(): array
     {
         return [
-            'date' => 'datetime',
+            'date' => 'datetime:d-m-Y',
         ];
     }
 

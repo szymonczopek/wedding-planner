@@ -10,7 +10,7 @@ import Select from 'primevue/select'
 import BrandBar from '../components/BrandBar.vue'
 import { useAuth } from '../composables/useAuth.js'
 import { useWedding } from '../composables/useWedding.js'
-import Avatar from "primevue/avatar";
+import router from "../router/index.js";
 
 const { user, logout} = useAuth()
 const { createWedding, joinToWedding, isCreating, isJoining} = useWedding()
@@ -28,6 +28,9 @@ const roles = ref([
   { label: 'Panna młoda', key: 'bride' },
   { label: 'Konsultant ślubny', key: 'wedding_planner' }
 ]);
+
+const selectedWeddings = user.value.weddings ?? []
+const hasSelectedWedding = selectedWeddings.length > 0
 
 async function create() {
   createErrors.value = {}
@@ -48,12 +51,16 @@ async function join() {
   }
 }
 
+async function desktop() {
+  await router.push('/')
+}
 </script>
 
 <template>
   <div class="auth-layout">
     <BrandBar show-menu-button @toggle-nav="mobileNavOpen = true">
       <template #end>
+        <Button v-if="hasSelectedWedding" label="Pulpit" icon="pi pi-home" class="btn" @click="desktop"/>
         <Button label="Wyloguj" icon="pi pi-sign-out" class="logout-btn" @click="logout" />
       </template>
     </BrandBar>

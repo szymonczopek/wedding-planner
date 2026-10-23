@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   --gold: linear-gradient(-45deg, #ffef7e 0%, #b8860b 100%);
   --gold-dark: #a07c33;
