@@ -7,15 +7,11 @@ import DatePicker from 'primevue/datepicker'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
-import BrandBar from '../components/BrandBar.vue'
-import { useAuth } from '../composables/useAuth.js'
+import AuthLayout from '../layouts/AuthLayout.vue'
 import { useWedding } from '../composables/useWedding.js'
-import router from "../router/index.js";
 
-const { user, logout} = useAuth()
 const { createWedding, joinToWedding, isCreating, isJoining} = useWedding()
 
-const mobileNavOpen = ref(false)
 const name = ref('')
 const invite_code = ref('')
 const date = ref(null)
@@ -28,9 +24,6 @@ const roles = ref([
   { label: 'Panna młoda', key: 'bride' },
   { label: 'Konsultant ślubny', key: 'wedding_planner' }
 ]);
-
-const selectedWeddings = user.value.weddings ?? []
-const hasSelectedWedding = selectedWeddings.length > 0
 
 async function create() {
   createErrors.value = {}
@@ -51,19 +44,10 @@ async function join() {
   }
 }
 
-async function desktop() {
-  await router.push('/')
-}
 </script>
 
 <template>
-  <div class="auth-layout">
-    <BrandBar show-menu-button @toggle-nav="mobileNavOpen = true">
-      <template #end>
-        <Button v-if="hasSelectedWedding" label="Pulpit" icon="pi pi-home" class="btn" @click="desktop"/>
-        <Button label="Wyloguj" icon="pi pi-sign-out" class="logout-btn" @click="logout" />
-      </template>
-    </BrandBar>
+  <AuthLayout>
     <div class="auth-page">
       <Card class="auth-card">
         <template #title>Dołącz do wesela za pomocą kodu zaproszenia</template>
@@ -101,7 +85,7 @@ async function desktop() {
           </form>
         </template>
       </Card>
-      <h1>Lub stwórz własne</h1>
+      lub stwórz własne
       <Card class="auth-card">
         <template #title>Stwórz swoje wesele!</template>
         <template #subtitle>Zacznij planować swój ślub w Wedding Planner</template>
@@ -158,16 +142,10 @@ async function desktop() {
         </template>
       </Card>
     </div>
-  </div>
+  </AuthLayout>
 </template>
 
 <style scoped>
-.auth-layout {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
 .auth-page {
   flex: 1;
   display: flex;
