@@ -20,10 +20,10 @@ const hasSelectedWedding = computed(() => (user.value?.weddings?.length ?? 0) > 
           v-if="hasSelectedWedding"
           label="Pulpit"
           icon="pi pi-home"
-          class="btn"
+          class="black-button mr-5"
           @click="router.push('/')"
         />
-        <Button label="Wyloguj" icon="pi pi-sign-out" class="logout-btn" @click="logout" />
+        <Button label="Wyloguj" icon="pi pi-sign-out" class="black-button" @click="logout" />
       </template>
     </BrandBar>
     <slot />
@@ -35,5 +35,17 @@ const hasSelectedWedding = computed(() => (user.value?.weddings?.length ?? 0) > 
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.black-button {
+  background: var(--p-menu-background, var(--p-surface-0, #ffffff));
+  border-color: var(--p-menu-border-color, transparent);
+  color: var(--p-menu-item-color, var(--p-text-color));
+}
+
+.black-button:hover {
+  background: var(--p-menu-item-focus-background, var(--p-surface-100, #f5f5f5));
+  border-color: var(--p-menu-border-color, transparent);
+  color: var(--p-menu-item-focus-color, var(--p-text-color));
 }
 </style>

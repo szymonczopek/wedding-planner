@@ -1,9 +1,9 @@
 <script setup>
 import {computed, onMounted, ref} from 'vue'
 import Button from 'primevue/button'
-import AuthLayout from '../layouts/AuthLayout.vue'
-import {useAuth} from '../composables/useAuth.js'
-import {useWedding} from '../composables/useWedding.js'
+import AuthLayout from '../../layouts/AuthLayout.vue'
+import {useAuth} from '../../composables/useAuth.js'
+import {useWedding} from '../../composables/useWedding.js'
 import Card from "primevue/card";
 
 const {getUserWithAllWeddings} = useAuth()

@@ -29,7 +29,7 @@ const weddingName = computed(() => selectedWedding.value?.name ?? '')
 const weddingMenuItems = computed(() => {
   const items = [
     {
-      label: 'Stwórz nowe',
+      label: 'Dołącz lub stwórz nowe',
       icon: 'pi pi-plus',
       command: () => goTo('/create-wedding'),
     },
@@ -109,7 +109,7 @@ onBeforeUnmount(() => clearTimeout(closeTimer))
               <span>{{ selectedWedding?.invite_code }}</span>
             </div>
         </div>
-        <Button label="Wyloguj" icon="pi pi-sign-out" class="logout-btn" @click="logout" />
+        <Button label="Wyloguj" icon="pi pi-sign-out" class="black-button" @click="logout" />
       </template>
     </BrandBar>
 
@@ -142,6 +142,7 @@ onBeforeUnmount(() => clearTimeout(closeTimer))
   margin: 0.25rem 0.25rem;
   color: #000000;
   border: 1px solid transparent;
+  border-radius: 4px;
 }
 
 .wedding-name {
@@ -164,13 +165,13 @@ onBeforeUnmount(() => clearTimeout(closeTimer))
   text-align: center;
 }
 
-.logout-btn {
+.black-button {
   background: var(--p-menu-background, var(--p-surface-0, #ffffff));
   border-color: var(--p-menu-border-color, transparent);
   color: var(--p-menu-item-color, var(--p-text-color));
 }
 
-.logout-btn:hover {
+.black-button:hover {
   background: var(--p-menu-item-focus-background, var(--p-surface-100, #f5f5f5));
   border-color: var(--p-menu-border-color, transparent);
   color: var(--p-menu-item-focus-color, var(--p-text-color));

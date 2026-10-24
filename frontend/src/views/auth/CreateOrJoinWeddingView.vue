@@ -7,8 +7,8 @@ import DatePicker from 'primevue/datepicker'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
-import AuthLayout from '../layouts/AuthLayout.vue'
-import { useWedding } from '../composables/useWedding.js'
+import AuthLayout from '../../layouts/AuthLayout.vue'
+import { useWedding } from '../../composables/useWedding.js'
 
 const { createWedding, joinToWedding, isCreating, isJoining} = useWedding()
 

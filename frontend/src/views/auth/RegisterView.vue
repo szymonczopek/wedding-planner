@@ -7,8 +7,8 @@ import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
-import BrandBar from '../components/BrandBar.vue'
-import {useAuth} from '../composables/useAuth.js'
+import BrandBar from '../../components/BrandBar.vue'
+import {useAuth} from '../../composables/useAuth.js'
 
 const {register, isLoading} = useAuth()
 

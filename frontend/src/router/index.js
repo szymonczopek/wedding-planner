@@ -1,16 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LoginView from '../views/LoginView.vue'
-import RegisterView from '../views/RegisterView.vue'
+import LoginView from '../views/auth/LoginView.vue'
+import RegisterView from '../views/auth/RegisterView.vue'
 import { getAuthToken } from '../api/client.js'
 import AppLayout from '../layouts/AppLayout.vue'
-import MainDesktopView from '../views/MainDesktopView.vue'
-import GuestsView from '../views/GuestsView.vue'
-import TablesView from "../views/TablesView.vue";
-import FinancesView from "../views/FinancesView.vue";
-import CalendarView from "../views/CalendarView.vue";
-import WeddingDayView from "../views/WeddingDayView.vue";
-import CreateOrJoinWeddingView from "../views/CreateOrJoinWeddingView.vue";
-import ChooseWeddingView from "../views/ChooseWeddingView.vue";
+import DesktopView from '../views/main/DesktopView.vue'
+import GuestsView from '../views/main/GuestsView.vue'
+import TablesView from "../views/main/TablesView.vue";
+import FinancesView from "../views/main/FinancesView.vue";
+import CalendarView from "../views/main/CalendarView.vue";
+import WeddingDayView from "../views/main/WeddingDayView.vue";
+import CreateOrJoinWeddingView from "../views/auth/CreateOrJoinWeddingView.vue";
+import ChooseWeddingView from "../views/auth/ChooseWeddingView.vue";
 
 const routes = [
   {
@@ -18,7 +18,7 @@ const routes = [
     component: AppLayout,
     meta: { requiresAuth: true, requiresWedding: true },
     children: [
-      { path: '', component: MainDesktopView },
+      { path: '', component: DesktopView },
       { path: 'guests', component: GuestsView },
       { path: 'tables', component: TablesView },
       { path: 'finances', component: FinancesView },
