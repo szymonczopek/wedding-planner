@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GuestController;
 use App\Http\Controllers\WeddingController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -27,5 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/create', [WeddingController::class, 'create']);
         Route::post('/join', [WeddingController::class, 'join']);
         Route::post('/choose', [WeddingController::class, 'choose']);
+    });
+
+    Route::prefix('/guests')->group(function () {
+        Route::post('/create', [GuestController::class, 'create']);
     });
 });

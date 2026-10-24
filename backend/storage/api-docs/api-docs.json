@@ -20,6 +20,238 @@
                 }
             }
         },
+        "/api/guests/create": {
+            "post": {
+                "tags": [
+                    "Guest"
+                ],
+                "summary": "Dodaj gościa",
+                "operationId": "2d443779e26c4e0c3ea538741d671b76",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "surname",
+                                    "acquaintance_type",
+                                    "child",
+                                    "groom_guest",
+                                    "invitation_prepared",
+                                    "invitation_delivered",
+                                    "confirmed_attendance",
+                                    "diet",
+                                    "wedding_id"
+                                ],
+                                "properties": {
+                                    "address_id": {
+                                        "description": "ID istniejącego adresu. Jeśli podano, dane adresowe nie są wymagane.",
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "example": "9d1f2c3b-4a5e-6f70-8a9b-0c1d2e3f4a5b"
+                                    },
+                                    "street": {
+                                        "description": "Wymagane tylko gdy nie podano address_id.",
+                                        "type": "string",
+                                        "example": "Kwiatowa"
+                                    },
+                                    "house_number": {
+                                        "description": "Wymagane tylko gdy nie podano address_id.",
+                                        "type": "string",
+                                        "example": "12"
+                                    },
+                                    "local_number": {
+                                        "description": "Wymagane tylko gdy nie podano address_id.",
+                                        "type": "string",
+                                        "example": "3",
+                                        "nullable": true
+                                    },
+                                    "city": {
+                                        "description": "Wymagane tylko gdy nie podano address_id.",
+                                        "type": "string",
+                                        "example": "Warszawa"
+                                    },
+                                    "postal_code": {
+                                        "description": "Wymagane tylko gdy nie podano address_id.",
+                                        "type": "string",
+                                        "example": "00-001"
+                                    },
+                                    "country": {
+                                        "description": "Wymagane tylko gdy nie podano address_id.",
+                                        "type": "string",
+                                        "example": "Polska"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Anna"
+                                    },
+                                    "surname": {
+                                        "type": "string",
+                                        "example": "Kowalska"
+                                    },
+                                    "acquaintance_type": {
+                                        "description": "Rodzaj znajomości",
+                                        "type": "string",
+                                        "example": "close_friend",
+                                        "enum": [
+                                            "witness",
+                                            "close_family",
+                                            "distant_family",
+                                            "close_friend",
+                                            "distant_friend",
+                                            "neighbor",
+                                            "plus_one"
+                                        ]
+                                    },
+                                    "child": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "groom_guest": {
+                                        "description": "Gość pana młodego",
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "invitation_prepared": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "invitation_delivered": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "confirmed_attendance": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "diet": {
+                                        "type": "string",
+                                        "example": "vegetarian",
+                                        "enum": [
+                                            "vegetarian",
+                                            "vegan",
+                                            "keto",
+                                            "light",
+                                            "gluten_free",
+                                            "lactose_free",
+                                            "nut_free",
+                                            "fish_and_seafood_free",
+                                            "halal",
+                                            "kosher",
+                                            "kids_menu"
+                                        ]
+                                    },
+                                    "wedding_id": {
+                                        "description": "ID wesela",
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "example": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+                                    },
+                                    "main_guest_id": {
+                                        "description": "ID głównego gościa, do którego przypisana jest osoba towarzysząca",
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "example": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pomyślnie utworzono gościa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "example": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+                                        },
+                                        "wedding_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "example": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Anna"
+                                        },
+                                        "surname": {
+                                            "type": "string",
+                                            "example": "Kowalska"
+                                        },
+                                        "acquaintance_type": {
+                                            "type": "string",
+                                            "example": "close_friend"
+                                        },
+                                        "child": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "groom_guest": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "diet": {
+                                            "type": "string",
+                                            "example": "vegetarian"
+                                        },
+                                        "table_position_x": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 100.5
+                                        },
+                                        "table_position_y": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 200.5
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Brak autoryzacji"
+                    },
+                    "422": {
+                        "description": "Błąd walidacji",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Wypełnij to pole"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "name": [
+                                                    "Wypełnij to pole"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/weddings/create": {
             "post": {
                 "tags": [
@@ -34,13 +266,13 @@
                 }
             }
         },
-        "/api/weddings/join-wedding": {
+        "/api/weddings/join": {
             "post": {
                 "tags": [
                     "Wedding"
                 ],
                 "summary": "Dołącz do wesela za pomocą kodu zaproszenia",
-                "operationId": "4f497ecc368632a0d925e69de4395155",
+                "operationId": "dc001bf3716bec50d55843c13aa62076",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -142,6 +374,10 @@
         {
             "name": "Auth",
             "description": "Rejestracja i logowanie"
+        },
+        {
+            "name": "Guest",
+            "description": "Operacje na gościach"
         },
         {
             "name": "Wedding",
