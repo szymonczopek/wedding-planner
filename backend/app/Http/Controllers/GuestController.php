@@ -49,41 +49,42 @@ class GuestController extends Controller
                         example: '9d1f2c3b-4a5e-6f70-8a9b-0c1d2e3f4a5b',
                     ),
                     new OA\Property(
-                        property: 'street',
-                        description: 'Wymagane tylko gdy nie podano address_id.',
-                        type: 'string',
-                        example: 'Kwiatowa',
-                    ),
-                    new OA\Property(
-                        property: 'house_number',
-                        description: 'Wymagane tylko gdy nie podano address_id.',
-                        type: 'string',
-                        example: '12',
-                    ),
-                    new OA\Property(
-                        property: 'local_number',
-                        description: 'Wymagane tylko gdy nie podano address_id.',
-                        type: 'string',
-                        example: '3',
-                        nullable: true,
-                    ),
-                    new OA\Property(
-                        property: 'city',
-                        description: 'Wymagane tylko gdy nie podano address_id.',
-                        type: 'string',
-                        example: 'Warszawa',
-                    ),
-                    new OA\Property(
-                        property: 'postal_code',
-                        description: 'Wymagane tylko gdy nie podano address_id.',
-                        type: 'string',
-                        example: '00-001',
-                    ),
-                    new OA\Property(
-                        property: 'country',
-                        description: 'Wymagane tylko gdy nie podano address_id.',
-                        type: 'string',
-                        example: 'Polska',
+                        property: 'address',
+                        description: 'Dane adresowe. Wymagane tylko gdy nie podano address_id.',
+                        type: 'object',
+                        properties: [
+                            new OA\Property(
+                                property: 'street',
+                                type: 'string',
+                                example: 'Kwiatowa',
+                            ),
+                            new OA\Property(
+                                property: 'house_number',
+                                type: 'string',
+                                example: '12',
+                            ),
+                            new OA\Property(
+                                property: 'local_number',
+                                type: 'string',
+                                nullable: true,
+                                example: '3',
+                            ),
+                            new OA\Property(
+                                property: 'city',
+                                type: 'string',
+                                example: 'Warszawa',
+                            ),
+                            new OA\Property(
+                                property: 'postal_code',
+                                type: 'string',
+                                example: '00-001',
+                            ),
+                            new OA\Property(
+                                property: 'country',
+                                type: 'string',
+                                example: 'Polska',
+                            ),
+                        ],
                     ),
                     new OA\Property(
                         property: 'name',

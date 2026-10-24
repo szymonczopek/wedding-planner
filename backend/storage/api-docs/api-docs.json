@@ -51,36 +51,36 @@
                                         "format": "uuid",
                                         "example": "9d1f2c3b-4a5e-6f70-8a9b-0c1d2e3f4a5b"
                                     },
-                                    "street": {
-                                        "description": "Wymagane tylko gdy nie podano address_id.",
-                                        "type": "string",
-                                        "example": "Kwiatowa"
-                                    },
-                                    "house_number": {
-                                        "description": "Wymagane tylko gdy nie podano address_id.",
-                                        "type": "string",
-                                        "example": "12"
-                                    },
-                                    "local_number": {
-                                        "description": "Wymagane tylko gdy nie podano address_id.",
-                                        "type": "string",
-                                        "example": "3",
-                                        "nullable": true
-                                    },
-                                    "city": {
-                                        "description": "Wymagane tylko gdy nie podano address_id.",
-                                        "type": "string",
-                                        "example": "Warszawa"
-                                    },
-                                    "postal_code": {
-                                        "description": "Wymagane tylko gdy nie podano address_id.",
-                                        "type": "string",
-                                        "example": "00-001"
-                                    },
-                                    "country": {
-                                        "description": "Wymagane tylko gdy nie podano address_id.",
-                                        "type": "string",
-                                        "example": "Polska"
+                                    "address": {
+                                        "description": "Dane adresowe. Wymagane tylko gdy nie podano address_id.",
+                                        "properties": {
+                                            "street": {
+                                                "type": "string",
+                                                "example": "Kwiatowa"
+                                            },
+                                            "house_number": {
+                                                "type": "string",
+                                                "example": "12"
+                                            },
+                                            "local_number": {
+                                                "type": "string",
+                                                "example": "3",
+                                                "nullable": true
+                                            },
+                                            "city": {
+                                                "type": "string",
+                                                "example": "Warszawa"
+                                            },
+                                            "postal_code": {
+                                                "type": "string",
+                                                "example": "00-001"
+                                            },
+                                            "country": {
+                                                "type": "string",
+                                                "example": "Polska"
+                                            }
+                                        },
+                                        "type": "object"
                                     },
                                     "name": {
                                         "type": "string",
