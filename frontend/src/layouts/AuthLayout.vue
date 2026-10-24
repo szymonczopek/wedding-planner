@@ -1,32 +1,25 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import Button from 'primevue/button'
+import { ref } from 'vue'
 import BrandBar from '../components/BrandBar.vue'
-import { useAuth } from '../composables/useAuth.js'
+import UserToolbar from '../components/UserToolbar.vue'
 
-const router = useRouter()
-const { user, logout } = useAuth()
+defineProps({
+  spread: { type: Boolean, default: false },
+})
 
 const mobileNavOpen = ref(false)
-const hasSelectedWedding = computed(() => (user.value?.weddings?.length ?? 0) > 0)
 </script>
 
 <template>
   <div class="auth-layout">
     <BrandBar show-menu-button @toggle-nav="mobileNavOpen = true">
       <template #end>
-        <Button
-          v-if="hasSelectedWedding"
-          label="Pulpit"
-          icon="pi pi-home"
-          class="black-button mr-5"
-          @click="router.push('/')"
-        />
-        <Button label="Wyloguj" icon="pi pi-sign-out" class="black-button" @click="logout" />
+        <UserToolbar compact />
       </template>
     </BrandBar>
-    <slot />
+    <div class="auth-page" :class="{ 'auth-page--spread': spread }">
+      <slot />
+    </div>
   </div>
 </template>
 
@@ -37,15 +30,34 @@ const hasSelectedWedding = computed(() => (user.value?.weddings?.length ?? 0) > 
   flex-direction: column;
 }
 
-.black-button {
-  background: var(--p-menu-background, var(--p-surface-0, #ffffff));
-  border-color: var(--p-menu-border-color, transparent);
-  color: var(--p-menu-item-color, var(--p-text-color));
+.auth-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3rem 1rem;
 }
 
-.black-button:hover {
-  background: var(--p-menu-item-focus-background, var(--p-surface-100, #f5f5f5));
-  border-color: var(--p-menu-border-color, transparent);
-  color: var(--p-menu-item-focus-color, var(--p-text-color));
+.auth-page--spread {
+  justify-content: space-around;
+}
+
+.auth-page :deep(.auth-card) {
+  width: 100%;
+  max-width: 480px;
+}
+
+.auth-page :deep(.auth-form) {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.auth-page :deep(.auth-switch) {
+  margin: 0;
+  text-align: center;
+  font-size: 0.92rem;
 }
 </style>

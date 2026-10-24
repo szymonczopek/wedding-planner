@@ -1,65 +1,55 @@
 <script setup>
-import {computed, onMounted, ref} from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import Button from 'primevue/button'
+import Card from 'primevue/card'
+import Message from 'primevue/message'
 import AuthLayout from '../../layouts/AuthLayout.vue'
-import {useAuth} from '../../composables/useAuth.js'
-import {useWedding} from '../../composables/useWedding.js'
-import Card from "primevue/card";
+import { useAuth } from '../../composables/useAuth.js'
+import { useWedding } from '../../composables/useWedding.js'
+import { getErrorMessage } from '../../api/errors.js'
 
-const {getUserWithAllWeddings} = useAuth()
-const {chooseWedding} = useWedding()
+const { getUserWithAllWeddings } = useAuth()
+const { chooseWedding, isChoosing } = useWedding()
 
-const name = ref('')
-const invite_code = ref('')
-const date = ref(null)
 const userWithAllWeddings = ref(null)
-const chooseErrors = ref({})
+const error = ref(null)
 
 onMounted(async () => {
-  userWithAllWeddings.value = await getUserWithAllWeddings()
+  try {
+    userWithAllWeddings.value = await getUserWithAllWeddings()
+  } catch (e) {
+    error.value = getErrorMessage(e, 'Nie udało się pobrać listy wesel')
+  }
 })
 
 const weddings = computed(() => userWithAllWeddings.value?.weddings ?? [])
 
 async function choose(id) {
-  chooseErrors.value = {}
+  error.value = null
   try {
     await chooseWedding(id)
   } catch (e) {
-    chooseErrors.value = e.response?.data?.errors ?? {}
+    error.value = getErrorMessage(e, 'Nie udało się wybrać wesela')
   }
 }
-
 </script>
 
 <template>
   <AuthLayout>
-    <div class="choose-wedding">
-      <Card class="choose-card w-full max-w-xl">
-        <template #title>Wybierz wesele</template>
-        <template #content>
-          <div
-            v-for="(item, index) in weddings"
-            :key="item.id ?? index"
-            class="flex items-center justify-between gap-4 py-2"
-          >
-            <span>{{ item.name }}</span>
-            <span v-if="item.date">{{ item.date }}</span>
-            <Button label="Wybierz" @click="choose(item.pivot.wedding_id)" />
-          </div>
-        </template>
-      </Card>
-    </div>
+    <Card class="w-full max-w-xl">
+      <template #title>Wybierz wesele</template>
+      <template #content>
+        <Message v-if="error" severity="error">{{ error }}</Message>
+        <div
+          v-for="(item, index) in weddings"
+          :key="item.id ?? index"
+          class="flex items-center justify-between gap-4 py-2"
+        >
+          <span>{{ item.name }}</span>
+          <span v-if="item.date">{{ item.date }}</span>
+          <Button label="Wybierz" :loading="isChoosing" @click="choose(item.pivot.wedding_id)" />
+        </div>
+      </template>
+    </Card>
   </AuthLayout>
 </template>
-
-<style scoped>
-.choose-wedding {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 3rem 1rem;
-}
-
-</style>
