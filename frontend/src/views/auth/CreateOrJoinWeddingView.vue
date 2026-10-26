@@ -48,7 +48,8 @@ async function join() {
 <template>
   <AuthLayout spread>
     <Card class="auth-card">
-      <template #title>Dołącz do wesela za pomocą kodu zaproszenia</template>
+      <template #title>Dołącz do wesela za pomocą kodu wesela</template>
+      <template #subtitle>Kod wesela znajduje się w obok nazwy użytkownika</template>
       <template #content>
         <form class="auth-form" @submit.prevent="join">
           <FormField id="invite-code" label="Kod wesela" :error="joinErrors.invite_code?.[0]">

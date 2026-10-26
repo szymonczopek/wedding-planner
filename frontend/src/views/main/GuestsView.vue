@@ -1,5 +1,6 @@
 <script setup>
 import {computed, reactive, ref} from 'vue'
+import AutoComplete from 'primevue/autocomplete'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import Dialog from 'primevue/dialog'
@@ -10,8 +11,10 @@ import FormField from '../../components/forms/FormField.vue'
 import api from '../../api/client.js'
 import {getValidationErrors} from '../../api/errors.js'
 import {useAuth} from '../../composables/useAuth.js'
+import {useGuest} from '../../composables/useGuest.js'
 
 const {user} = useAuth()
+const {searchAddresses} = useGuest()
 
 const acquaintanceTypes = [
   {label: 'Świadek', value: 'witness'},
@@ -42,10 +45,11 @@ const isModalOpen = ref(false)
 const isSubmitting = ref(false)
 const errors = ref({})
 const addressMode = ref('existing')
-const addressSearch = ref('')
-const addressResults = ref([])
-const selectedAddressId = ref(null)
+const selectedAddress = ref(null)
+const addressSuggestions = ref([])
 const guests = ref([])
+const isSearchingAddress = ref(false)
+let lastAddressQuery = ''
 
 const selectedWedding = computed(() => {
   const weddings = user.value?.weddings ?? []
@@ -55,6 +59,8 @@ const selectedWedding = computed(() => {
 
 const weddingId = computed(() => selectedWedding.value?.pivot?.wedding_id ?? null)
 
+const selectedAddressId = computed(() => selectedAddress.value?.id ?? null)
+
 const isGroom = computed(() => selectedWedding.value?.pivot?.role === 'groom')
 
 function emptyForm() {
@@ -63,7 +69,7 @@ function emptyForm() {
     surname: '',
     acquaintance_type: null,
     child: false,
-    groom_guest: isGroom.value,
+    guest_side: isGroom.value ? 'groom' : 'bride',
     diet: null,
     main_guest_id: null,
     address: {
@@ -91,15 +97,52 @@ function resetForm() {
   errors.value = {}
   isSubmitting.value = false
   addressMode.value = 'existing'
-  addressSearch.value = ''
-  addressResults.value = []
-  selectedAddressId.value = null
+  selectedAddress.value = null
+  addressSuggestions.value = []
+  isSearchingAddress.value = false
+  lastAddressQuery = ''
 }
 
-function searchAddress() {
-  selectedAddressId.value = null
-  addressResults.value = []
-  // TODO: wyszukiwarka
+function formatAddress(address) {
+  const street = [address.street, address.house_number].filter(Boolean).join(' ')
+  const localNumber = address.local_number ? `/${address.local_number}` : ''
+  const city = [address.postal_code, address.city].filter(Boolean).join(' ')
+
+  return [`${street}${localNumber}`, city, address.country].filter(Boolean).join(', ')
+}
+
+async function searchAddress(event) {
+  const query = (event?.query ?? '').trim()
+  lastAddressQuery = query
+
+  if (!weddingId.value || query.length < 2) {
+    addressSuggestions.value = []
+    isSearchingAddress.value = false
+    return
+  }
+
+  isSearchingAddress.value = true
+
+  try {
+    const data = await searchAddresses(weddingId.value, query)
+
+    if (lastAddressQuery !== query) {
+      return
+    }
+
+    addressSuggestions.value = data.map((address) => ({
+      ...address,
+      label: formatAddress(address),
+    }))
+  } catch {
+    if (lastAddressQuery === query) {
+      addressSuggestions.value = []
+    }
+  } finally {
+    if (lastAddressQuery === query) {
+      isSearchingAddress.value = false
+    }
+  }
 }
 
 async function loadGuests() {
@@ -143,7 +186,12 @@ async function submitGuest() {
       surname: form.surname,
       acquaintance_type: form.acquaintance_type,
       child: form.child,
-      groom_guest: form.groom_guest,
+      groom_guest:
+        form.guest_side === 'groom'
+          ? true
+          : form.guest_side === 'bride'
+            ? false
+            : null,
       diet: form.diet,
       wedding_id: weddingId.value,
     }
@@ -230,30 +278,30 @@ async function submitGuest() {
               2. Strona:
               <div class="checkbox-item">
                 <RadioButton
-                    v-model="form.groom_guest"
+                    v-model="form.guest_side"
                     inputId="guest-groom-side"
                     name="groom-guest-side"
-                    :value="true"
+                    value="groom"
                 />
                 <label for="guest-groom-side">Gość Pana Młodego</label>
               </div>
               <div class="checkbox-item">
                 <RadioButton
-                    v-model="form.groom_guest"
+                    v-model="form.guest_side"
                     inputId="guest-bride-side"
                     name="groom-guest-side"
-                    :value="false"
+                    value="bride"
                 />
                 <label for="guest-bride-side">Gość Panny Młodej</label>
               </div>
               <div class="checkbox-item">
                 <RadioButton
-                    v-model="form.groom_guest"
+                    v-model="form.guest_side"
                     inputId="guest-both"
                     name="groom-guest-side"
-                    :value="null"
+                    value="both"
                 />
-                <label for="guest-bride-side">Gość wspólny</label>
+                <label for="guest-both">Gość wspólny</label>
               </div>
               3. Wiek
               <div class="checkbox-item">
@@ -287,7 +335,7 @@ async function submitGuest() {
                     name="address-mode"
                     value="existing"
                 />
-                <label for="address-mode-existing">Dołącz do adresu zapisanego gościa</label>
+                <label for="address-mode-existing">Dołącz do zapisanego adresu istniejącego gościa</label>
               </div>
               <div class="address-mode-option">
                 <RadioButton
@@ -304,27 +352,25 @@ async function submitGuest() {
               <div class="full-width">
                 <FormField id="address-search" label="Wyszukiwarka adresu" :error="errors.address_id?.[0]">
                   <template #default="{ id, invalid }">
-                    <InputText
-                        :id="id"
-                        v-model="addressSearch"
-                        type="text"
+                    <AutoComplete
+                        :inputId="id"
+                        v-model="selectedAddress"
+                        :suggestions="addressSuggestions"
+                        optionLabel="label"
+                        dataKey="id"
+                        :delay="300"
+                        :minLength="2"
+                        :loading="isSearchingAddress"
+                        forceSelection
+                        showClear
+                        placeholder="Wybierz adres"
+                        emptySearchMessage="Brak wyników"
                         :invalid="invalid"
                         fluid
-                        @input="searchAddress"
+                        @complete="searchAddress"
                     />
                   </template>
                 </FormField>
-                <Select
-                    v-if="addressResults.length"
-                    v-model="selectedAddressId"
-                    :options="addressResults"
-                    optionLabel="label"
-                    optionValue="id"
-                    placeholder="Wybierz adres"
-                    class="address-results"
-                    fluid
-                />
-                <small v-else class="hint">Wyszukiwarka adresu zostanie podłączona później.</small>
               </div>
             </div>
 
@@ -410,17 +456,6 @@ async function submitGuest() {
   margin: 0.5rem 0;
 }
 
-
-.address-results {
-  margin-top: 0.5rem;
-}
-
-.hint {
-  display: block;
-  margin-top: 0.5rem;
-  color: var(--p-text-muted-color, #6b7280);
-  font-size: 0.85rem;
-}
 
 .modal-actions {
   display: flex;

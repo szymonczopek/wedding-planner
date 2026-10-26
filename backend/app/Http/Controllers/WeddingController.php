@@ -38,7 +38,7 @@ class WeddingController extends Controller
 
     #[OA\Post(
         path: '/api/weddings/join',
-        summary: 'Dołącz do wesela za pomocą kodu zaproszenia',
+        summary: 'Dołącz do wesela za pomocą kodu wesela',
         security: [['sanctum' => []]],
         requestBody: new OA\RequestBody(
             required: true,
@@ -47,7 +47,7 @@ class WeddingController extends Controller
                 properties: [
                     new OA\Property(
                         property: 'invite_code',
-                        description: 'Kod zaproszenia do wesela',
+                        description: 'Kod wesela',
                         type: 'string',
                         example: 'ABC123',
                     ),
@@ -83,7 +83,7 @@ class WeddingController extends Controller
                         new OA\Property(
                             property: 'invite_code',
                             type: 'array',
-                            items: new OA\Items(type: 'string', example: 'Nie istnieje taki kod zaproszenia'),
+                            items: new OA\Items(type: 'string', example: 'Nie istnieje taki kod wesela'),
                         ),
                     ],
                 ),

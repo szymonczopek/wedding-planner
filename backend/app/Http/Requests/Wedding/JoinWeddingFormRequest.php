@@ -12,7 +12,7 @@ class JoinWeddingFormRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'invite_code.exists' => 'Nie istnieje taki kod zaproszenia',
+            'invite_code.exists' => 'Nie istnieje taki kod wesela',
         ];
     }
 

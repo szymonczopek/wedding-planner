@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\WeddingController;
@@ -34,4 +35,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [GuestController::class, 'index']);
         Route::post('/create', [GuestController::class, 'create']);
     });
+
+    Route::get('/addresses/search', [AddressController::class, 'search']);
 });
