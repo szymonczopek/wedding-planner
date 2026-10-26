@@ -12,7 +12,7 @@ class CreateGuestDTO
         public string $surname,
         public AcquaintanceTypesEnum $acquaintance_type,
         public bool $child,
-        public bool $groom_guest,
+        public ?bool $groom_guest,
         public bool $invitation_prepared,
         public bool $invitation_delivered,
         public bool $confirmed_attendance,
@@ -32,7 +32,7 @@ class CreateGuestDTO
             surname: $data['surname'],
             acquaintance_type: AcquaintanceTypesEnum::from($data['acquaintance_type']),
             child: (bool) $data['child'],
-            groom_guest: (bool) $data['groom_guest'],
+            groom_guest: isset($data['groom_guest']) ? (bool) $data['groom_guest'] : null,
             invitation_prepared: false,
             invitation_delivered: false,
             confirmed_attendance: false,
@@ -44,7 +44,7 @@ class CreateGuestDTO
     }
 
     /**
-     * @return array<string, bool|float|string>
+     * @return array<string, bool|float|string|null>
      */
     public function toArray(): array
     {

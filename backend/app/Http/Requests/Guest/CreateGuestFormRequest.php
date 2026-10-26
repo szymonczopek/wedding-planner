@@ -50,7 +50,7 @@ class CreateGuestFormRequest extends FormRequest
             'surname' => ['required', 'string'],
             'acquaintance_type' => ['required', new Enum(AcquaintanceTypesEnum::class)],
             'child' => ['required', 'boolean'],
-            'groom_guest' => ['required', 'boolean'],
+            'groom_guest' => ['nullable', 'boolean'],
             'diet' => ['required', new Enum(DietsEnum::class)],
             'wedding_id' => [
                 'required',

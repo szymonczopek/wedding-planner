@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Guest\CreateGuestFormRequest;
+use App\Http\Requests\Guest\ListGuestsFormRequest;
 use App\Services\Guest\GuestService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
@@ -16,6 +17,45 @@ class GuestController extends Controller
     public function __construct(GuestService $guestService)
     {
         $this->guestService = $guestService;
+    }
+
+    #[OA\Get(
+        path: '/api/guests',
+        summary: 'Lista gości wesela',
+        security: [['sanctum' => []]],
+        tags: ['Guest'],
+        parameters: [
+            new OA\Parameter(
+                name: 'wedding_id',
+                description: 'ID wesela',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'string', format: 'uuid'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Lista gości',
+                content: new OA\JsonContent(
+                    type: 'array',
+                    items: new OA\Items(
+                        properties: [
+                            new OA\Property(property: 'id', type: 'string', format: 'uuid'),
+                            new OA\Property(property: 'name', type: 'string'),
+                            new OA\Property(property: 'surname', type: 'string'),
+                        ],
+                    ),
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Brak autoryzacji'),
+            new OA\Response(response: 403, description: 'Brak dostępu do wesela'),
+            new OA\Response(response: 422, description: 'Błąd walidacji'),
+        ],
+    )]
+    public function index(ListGuestsFormRequest $request): JsonResponse
+    {
+        return response()->json($this->guestService->getGuestsForWedding($request->validated()['wedding_id']));
     }
 
     /**
@@ -33,7 +73,6 @@ class GuestController extends Controller
                     'surname',
                     'acquaintance_type',
                     'child',
-                    'groom_guest',
                     'invitation_prepared',
                     'invitation_delivered',
                     'confirmed_attendance',
@@ -51,7 +90,6 @@ class GuestController extends Controller
                     new OA\Property(
                         property: 'address',
                         description: 'Dane adresowe. Wymagane tylko gdy nie podano address_id.',
-                        type: 'object',
                         properties: [
                             new OA\Property(
                                 property: 'street',
@@ -66,8 +104,8 @@ class GuestController extends Controller
                             new OA\Property(
                                 property: 'local_number',
                                 type: 'string',
-                                nullable: true,
                                 example: '3',
+                                nullable: true,
                             ),
                             new OA\Property(
                                 property: 'city',
@@ -85,6 +123,7 @@ class GuestController extends Controller
                                 example: 'Polska',
                             ),
                         ],
+                        type: 'object',
                     ),
                     new OA\Property(
                         property: 'name',
@@ -118,9 +157,10 @@ class GuestController extends Controller
                     ),
                     new OA\Property(
                         property: 'groom_guest',
-                        description: 'Gość pana młodego',
+                        description: 'Gość pana młodego (true), gość panny młodej (false) lub gość wspólny (null)',
                         type: 'boolean',
                         example: true,
+                        nullable: true,
                     ),
                     new OA\Property(
                         property: 'invitation_prepared',
@@ -185,7 +225,7 @@ class GuestController extends Controller
                         new OA\Property(property: 'surname', type: 'string', example: 'Kowalska'),
                         new OA\Property(property: 'acquaintance_type', type: 'string', example: 'close_friend'),
                         new OA\Property(property: 'child', type: 'boolean', example: false),
-                        new OA\Property(property: 'groom_guest', type: 'boolean', example: true),
+                        new OA\Property(property: 'groom_guest', type: 'boolean', example: true, nullable: true),
                         new OA\Property(property: 'diet', type: 'string', example: 'vegetarian'),
                         new OA\Property(property: 'table_position_x', type: 'number', format: 'float', example: 100.5),
                         new OA\Property(property: 'table_position_y', type: 'number', format: 'float', example: 200.5),

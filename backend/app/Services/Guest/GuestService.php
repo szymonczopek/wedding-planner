@@ -7,10 +7,22 @@ use App\DTO\Guest\CreateGuestDTO;
 use App\Http\Requests\Guest\CreateGuestFormRequest;
 use App\Models\Address;
 use App\Models\Guest;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class GuestService
 {
+    /**
+     * @return Collection<int, Guest>
+     */
+    public function getGuestsForWedding(string $weddingId): Collection
+    {
+        return Guest::where('wedding_id', $weddingId)
+            ->orderBy('surname')
+            ->orderBy('name')
+            ->get(['id', 'name', 'surname']);
+    }
+
     public function createGuest(CreateGuestFormRequest $request): Guest
     {
         $data = $request->validated();

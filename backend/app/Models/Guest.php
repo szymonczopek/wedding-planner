@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\NullableBoolean;
 use App\Enums\AcquaintanceTypesEnum;
 use App\Enums\DietsEnum;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -29,7 +30,7 @@ class Guest extends Model
             'acquaintance_type' => AcquaintanceTypesEnum::class,
             'diet' => DietsEnum::class,
             'child' => 'boolean',
-            'groom_guest' => 'boolean',
+            'groom_guest' => NullableBoolean::class,
             'invitation_prepared' => 'boolean',
             'invitation_delivered' => 'boolean',
             'confirmed_attendance' => 'boolean',

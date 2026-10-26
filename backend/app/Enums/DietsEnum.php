@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum DietsEnum: string
 {
+    case STANDARD = 'standard';
     case VEGETARIAN = 'vegetarian';
     case VEGAN = 'vegan';
     case KETO = 'keto';
@@ -19,6 +20,7 @@ enum DietsEnum: string
     public function label(): string
     {
         return match ($this) {
+            self::STANDARD => 'Standardowa',
             self::VEGETARIAN => 'Wegetariańska',
             self::VEGAN => 'Wegańska',
             self::KETO => 'Keto',

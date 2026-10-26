@@ -150,12 +150,6 @@ onBeforeUnmount(() => clearTimeout(closeTimer))
   text-align: center;
 }
 
-.black-button {
-  background: var(--p-menu-background, var(--p-surface-0, #ffffff));
-  border-color: var(--p-menu-border-color, transparent);
-  color: var(--p-menu-item-color, var(--p-text-color));
-}
-
 .black-button:hover {
   background: var(--p-menu-item-focus-background, var(--p-surface-100, #f5f5f5));
   border-color: var(--p-menu-border-color, transparent);
