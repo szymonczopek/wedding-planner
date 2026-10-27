@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'api_gus' => [
+        'base_url' => env('GUS_API_URL', 'https://api.adresy.app/api/v1'),
+        'key' => env('GUS_API_KEY'),
+    ],
+
 ];

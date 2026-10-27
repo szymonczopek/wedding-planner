@@ -113,6 +113,12 @@ class GuestController extends Controller
                                 example: 'Warszawa',
                             ),
                             new OA\Property(
+                                property: 'district',
+                                type: 'string',
+                                example: 'Warszawa',
+                                nullable: true,
+                            ),
+                            new OA\Property(
                                 property: 'postal_code',
                                 type: 'string',
                                 example: '00-001',

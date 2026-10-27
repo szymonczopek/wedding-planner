@@ -9,5 +9,13 @@ export function useGuest() {
     return data ?? []
   }
 
-  return { searchAddresses }
+  async function searchPolishAddresses(query) {
+    const { data } = await api.get('/addresses/autocomplete', {
+      params: { q: query },
+    })
+
+    return data ?? []
+  }
+
+  return { searchAddresses, searchPolishAddresses }
 }

@@ -39,6 +39,7 @@ class AddressService
                 'house_number',
                 'local_number',
                 'city',
+                'district',
                 'postal_code',
                 'country',
             ]);

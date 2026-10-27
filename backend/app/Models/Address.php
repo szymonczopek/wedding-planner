@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['street', 'house_number', 'local_number', 'city', 'postal_code', 'country'])]
+#[Fillable(['street', 'house_number', 'local_number', 'city', 'district', 'postal_code', 'country'])]
 class Address extends Model
 {
     use HasUuids;

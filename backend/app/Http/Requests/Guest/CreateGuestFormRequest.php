@@ -38,13 +38,14 @@ class CreateGuestFormRequest extends FormRequest
 
         return [
             'address_id' => ['sometimes', 'string', 'exists:App\Models\Address,id'],
-            'address' => ['sometimes', 'array'],
-            'address.street' => ['required_without:address_id', 'string'],
-            'address.house_number' => ['required_without:address_id', 'string'],
+            'address' => ['required_without:address_id', 'array'],
+            'address.street' => ['nullable', 'string'],
+            'address.house_number' => ['required_with:address', 'string', 'required'],
             'address.local_number' => ['nullable', 'string'],
-            'address.city' => ['required_without:address_id', 'string'],
-            'address.postal_code' => ['required_without:address_id', 'string'],
-            'address.country' => ['required_without:address_id', 'string'],
+            'address.city' => ['required_with:address', 'string', 'required'],
+            'address.district' => ['nullable', 'string'],
+            'address.postal_code' => ['nullable', 'string'],
+            'address.country' => ['nullable', 'string'],
 
             'name' => ['required', 'string'],
             'surname' => ['required', 'string'],

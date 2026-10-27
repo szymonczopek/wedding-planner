@@ -6,6 +6,167 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/addresses/search": {
+            "get": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Wyszukaj adresy wesela",
+                "operationId": "3a94955b112e18e917a89a3d266de56e",
+                "parameters": [
+                    {
+                        "name": "wedding_id",
+                        "in": "query",
+                        "description": "ID wesela",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Miejscowość lub ulica i numer",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista pasujących adresów",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "street": {
+                                                "type": "string",
+                                                "example": "Kwiatowa"
+                                            },
+                                            "house_number": {
+                                                "type": "string",
+                                                "example": "12"
+                                            },
+                                            "local_number": {
+                                                "type": "string",
+                                                "example": "3",
+                                                "nullable": true
+                                            },
+                                            "city": {
+                                                "type": "string",
+                                                "example": "Warszawa"
+                                            },
+                                            "postal_code": {
+                                                "type": "string",
+                                                "example": "00-001"
+                                            },
+                                            "country": {
+                                                "type": "string",
+                                                "example": "Polska"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Brak autoryzacji"
+                    },
+                    "403": {
+                        "description": "Brak dostępu do wesela"
+                    },
+                    "422": {
+                        "description": "Błąd walidacji"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/addresses/autocomplete": {
+            "get": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Wyszukaj adres w Polsce",
+                "operationId": "5628f299c8f1725ac0294a66eeb191a4",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Miejscowość lub ulica, np. „kraków mała”",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista pasujących adresów",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "street": {
+                                                "type": "string",
+                                                "example": "ul. Mała"
+                                            },
+                                            "city": {
+                                                "type": "string",
+                                                "example": "Kraków"
+                                            },
+                                            "postal_code": {
+                                                "type": "string",
+                                                "example": "31-107"
+                                            },
+                                            "country": {
+                                                "type": "string",
+                                                "example": "Polska"
+                                            },
+                                            "label": {
+                                                "type": "string",
+                                                "example": "ul. Mała, Kraków, 31-107"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Brak autoryzacji"
+                    },
+                    "422": {
+                        "description": "Błąd walidacji"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/register": {
             "post": {
                 "tags": [
@@ -18,6 +179,68 @@
                         "description": "OK"
                     }
                 }
+            }
+        },
+        "/api/guests": {
+            "get": {
+                "tags": [
+                    "Guest"
+                ],
+                "summary": "Lista gości wesela",
+                "operationId": "ba13faba9c30d75ce7386db1cee72e22",
+                "parameters": [
+                    {
+                        "name": "wedding_id",
+                        "in": "query",
+                        "description": "ID wesela",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista gości",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "surname": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Brak autoryzacji"
+                    },
+                    "403": {
+                        "description": "Brak dostępu do wesela"
+                    },
+                    "422": {
+                        "description": "Błąd walidacji"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/guests/create": {
@@ -37,7 +260,6 @@
                                     "surname",
                                     "acquaintance_type",
                                     "child",
-                                    "groom_guest",
                                     "invitation_prepared",
                                     "invitation_delivered",
                                     "confirmed_attendance",
@@ -109,9 +331,10 @@
                                         "example": false
                                     },
                                     "groom_guest": {
-                                        "description": "Gość pana młodego",
+                                        "description": "Gość pana młodego (true), gość panny młodej (false) lub gość wspólny (null)",
                                         "type": "boolean",
-                                        "example": true
+                                        "example": true,
+                                        "nullable": true
                                     },
                                     "invitation_prepared": {
                                         "type": "boolean",
@@ -195,7 +418,8 @@
                                         },
                                         "groom_guest": {
                                             "type": "boolean",
-                                            "example": true
+                                            "example": true,
+                                            "nullable": true
                                         },
                                         "diet": {
                                             "type": "string",
@@ -271,7 +495,7 @@
                 "tags": [
                     "Wedding"
                 ],
-                "summary": "Dołącz do wesela za pomocą kodu zaproszenia",
+                "summary": "Dołącz do wesela za pomocą kodu wesela",
                 "operationId": "dc001bf3716bec50d55843c13aa62076",
                 "requestBody": {
                     "required": true,
@@ -283,7 +507,7 @@
                                 ],
                                 "properties": {
                                     "invite_code": {
-                                        "description": "Kod zaproszenia do wesela",
+                                        "description": "Kod wesela",
                                         "type": "string",
                                         "example": "ABC123"
                                     },
@@ -342,7 +566,7 @@
                                             "type": "array",
                                             "items": {
                                                 "type": "string",
-                                                "example": "Nie istnieje taki kod zaproszenia"
+                                                "example": "Nie istnieje taki kod wesela"
                                             }
                                         }
                                     },
@@ -371,6 +595,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Address",
+            "description": "Operacje na adresach"
+        },
         {
             "name": "Auth",
             "description": "Rejestracja i logowanie"

@@ -37,4 +37,5 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::get('/addresses/search', [AddressController::class, 'search']);
+    Route::get('/addresses/autocomplete', [AddressController::class, 'autocomplete']);
 });

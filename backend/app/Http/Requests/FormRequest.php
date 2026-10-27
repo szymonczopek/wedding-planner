@@ -14,6 +14,7 @@ abstract class FormRequest extends FrameworkFormRequest
             'email.unique' => 'Ten adres e-mail posiada już konto',
             'date' => 'Podaj datę',
             'password.confirmed' => 'Powtórz hasło',
+            'required_with' => 'Wypełnij to pole',
         ];
     }
 
