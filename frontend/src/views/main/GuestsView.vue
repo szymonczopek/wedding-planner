@@ -82,7 +82,7 @@ function emptyForm() {
     acquaintance_type: null,
     child: false,
     guest_side: isGroom.value ? 'groom' : 'bride',
-    diet: null,
+    diet: diets[0]?.value ?? null,
     main_guest_id: null,
     address: {
       street: '',
@@ -124,6 +124,14 @@ function formatAddress(address) {
   const street = [address.street, address.house_number].filter(Boolean).join(' ')
   const localNumber = address.local_number ? `/${address.local_number}` : ''
   const city = [address.postal_code, address.city].filter(Boolean).join(' ')
+
+  if (!address.street) {
+    return [
+      [address.city, address.house_number].filter(Boolean).join(' '),
+      address.postal_code ? city : null,
+      address.country,
+    ].filter(Boolean).join(', ')
+  }
 
   return [`${street}${localNumber}`, city, address.country].filter(Boolean).join(', ')
 }
