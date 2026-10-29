@@ -14,7 +14,6 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('invite_code');
-            $table->dropColumn('role');
         });
 
         Schema::table('weddings', function (Blueprint $table) {

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/health', function () {
     return response()->json([
-        'status' => 'okkkk',
+        'status' => 'ok',
         'php' => PHP_VERSION,
         'laravel' => app()->version(),
         'db' => DB::connection()->getDriverName(),
