@@ -69,8 +69,6 @@ const selectedWedding = computed(() => {
   return weddings.find((wedding) => wedding.pivot?.selected) ?? weddings[0] ?? null
 })
 
-const weddingId = computed(() => selectedWedding.value?.pivot?.wedding_id ?? null)
-
 const selectedAddressId = computed(() => selectedAddress.value?.id ?? null)
 
 const isGroom = computed(() => selectedWedding.value?.pivot?.role === 'groom')
@@ -140,7 +138,7 @@ async function searchAddress(event) {
   const query = (event?.query ?? '').trim()
   lastAddressQuery = query
 
-  if (!weddingId.value || query.length < 2) {
+  if (query.length < 2) {
     addressSuggestions.value = []
     isSearchingAddress.value = false
     return
@@ -149,7 +147,7 @@ async function searchAddress(event) {
   isSearchingAddress.value = true
 
   try {
-    const data = await searchAddresses(weddingId.value, query)
+    const data = await searchAddresses(query)
 
     if (lastAddressQuery !== query) {
       return
@@ -230,13 +228,8 @@ function clearPolishAddress() {
 }
 
 async function loadGuests() {
-  if (!weddingId.value) {
-    guests.value = []
-    return
-  }
-
   try {
-    const {data} = await api.get('/guests', {params: {wedding_id: weddingId.value}})
+    const {data} = await api.get('/guests')
     guests.value = data ?? []
   } catch {
     guests.value = []
@@ -251,11 +244,6 @@ async function addGuestModal() {
 
 async function submitGuest() {
   errors.value = {}
-
-  if (!weddingId.value) {
-    errors.value = {wedding_id: ['Brak wybranego wesela']}
-    return
-  }
 
   if (addressMode.value === 'existing' && !selectedAddressId.value) {
     errors.value = {address_id: ['Wybierz adres z wyszukiwarki']}
@@ -276,8 +264,7 @@ async function submitGuest() {
           : form.guest_side === 'bride'
             ? false
             : null,
-      diet: form.diet,
-      wedding_id: weddingId.value,
+      diet: form.diet
     }
 
     if (form.main_guest_id) {

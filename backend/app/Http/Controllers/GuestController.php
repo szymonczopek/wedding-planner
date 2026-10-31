@@ -24,15 +24,6 @@ class GuestController extends Controller
         summary: 'Lista gości wesela',
         security: [['sanctum' => []]],
         tags: ['Guest'],
-        parameters: [
-            new OA\Parameter(
-                name: 'wedding_id',
-                description: 'ID wesela',
-                in: 'query',
-                required: true,
-                schema: new OA\Schema(type: 'string', format: 'uuid'),
-            ),
-        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -53,9 +44,9 @@ class GuestController extends Controller
             new OA\Response(response: 422, description: 'Błąd walidacji'),
         ],
     )]
-    public function index(ListGuestsFormRequest $request): JsonResponse
+    public function index(/*ListGuestsFormRequest $request*/): JsonResponse
     {
-        return response()->json($this->guestService->getGuestsForWedding($request->validated()['wedding_id']));
+        return response()->json($this->guestService->getGuestsForWedding());
     }
 
     /**

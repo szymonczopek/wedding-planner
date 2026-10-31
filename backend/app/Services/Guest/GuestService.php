@@ -15,12 +15,12 @@ class GuestService
     /**
      * @return Collection<int, Guest>
      */
-    public function getGuestsForWedding(string $weddingId): Collection
+    public function getGuestsForWedding(): Collection
     {
-        return Guest::where('wedding_id', $weddingId)
+        return Guest::where('wedding_id', auth()->user()->selectedWeddingId())
             ->orderBy('surname')
             ->orderBy('name')
-            ->get(['id', 'name', 'surname']);
+            ->get();
     }
 
     public function createGuest(CreateGuestFormRequest $request): Guest

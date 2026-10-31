@@ -37,7 +37,7 @@ class CreateGuestDTO
             invitation_delivered: false,
             confirmed_attendance: false,
             diet: DietsEnum::from($data['diet']),
-            wedding_id: $data['wedding_id'],
+            wedding_id: auth()->user()->selectedWeddingId(),
             created_by: auth()->user()->id,
             main_guest_id: $data['main_guest_id'] ?? null,
         );

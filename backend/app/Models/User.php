@@ -52,6 +52,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Wedding::class, 'wedding_user', 'user_id', 'wedding_id')->using(WeddingUser::class)->withPivot(['id', 'role', 'selected'])->withTimestamps();
     }
 
+    public function selectedWeddingId(): ?string
+    {
+        return $this->weddingUsers()->where('selected', true)->value('wedding_id');
+    }
+
     public function weddingUsers(): HasMany
     {
         return $this->hasMany(WeddingUser::class, 'user_id');

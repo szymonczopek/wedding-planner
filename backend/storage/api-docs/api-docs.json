@@ -64,6 +64,11 @@
                                                 "type": "string",
                                                 "example": "Warszawa"
                                             },
+                                            "district": {
+                                                "type": "string",
+                                                "example": "Warszawa",
+                                                "nullable": true
+                                            },
                                             "postal_code": {
                                                 "type": "string",
                                                 "example": "00-001"
@@ -126,17 +131,32 @@
                                             "id": {
                                                 "type": "string"
                                             },
+                                            "type": {
+                                                "type": "string",
+                                                "example": "street",
+                                                "enum": [
+                                                    "city",
+                                                    "street"
+                                                ]
+                                            },
                                             "street": {
                                                 "type": "string",
-                                                "example": "ul. Mała"
+                                                "example": "ul. Mała",
+                                                "nullable": true
                                             },
                                             "city": {
                                                 "type": "string",
                                                 "example": "Kraków"
                                             },
+                                            "district": {
+                                                "type": "string",
+                                                "example": "Kraków",
+                                                "nullable": true
+                                            },
                                             "postal_code": {
                                                 "type": "string",
-                                                "example": "31-107"
+                                                "example": "31-107",
+                                                "nullable": true
                                             },
                                             "country": {
                                                 "type": "string",
@@ -188,18 +208,6 @@
                 ],
                 "summary": "Lista gości wesela",
                 "operationId": "ba13faba9c30d75ce7386db1cee72e22",
-                "parameters": [
-                    {
-                        "name": "wedding_id",
-                        "in": "query",
-                        "description": "ID wesela",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "uuid"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Lista gości",
@@ -292,6 +300,11 @@
                                             "city": {
                                                 "type": "string",
                                                 "example": "Warszawa"
+                                            },
+                                            "district": {
+                                                "type": "string",
+                                                "example": "Warszawa",
+                                                "nullable": true
                                             },
                                             "postal_code": {
                                                 "type": "string",
