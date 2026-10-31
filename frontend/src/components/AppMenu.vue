@@ -49,4 +49,11 @@ const items = ref([
   background: var(--gold);
   color: black;
 }
+
+:global(.p-menu.app-menu) {
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+  border: none;
+}
 </style>
