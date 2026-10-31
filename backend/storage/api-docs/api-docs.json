@@ -201,13 +201,13 @@
                 }
             }
         },
-        "/api/guests": {
+        "/api/guests/list": {
             "get": {
                 "tags": [
                     "Guest"
                 ],
                 "summary": "Lista gości wesela",
-                "operationId": "ba13faba9c30d75ce7386db1cee72e22",
+                "operationId": "e0ce1773c3bf44f40c6fc82cb2905508",
                 "responses": {
                     "200": {
                         "description": "Lista gości",
@@ -233,6 +233,34 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Brak autoryzacji"
+                    },
+                    "403": {
+                        "description": "Brak dostępu do wesela"
+                    },
+                    "422": {
+                        "description": "Błąd walidacji"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/guests": {
+            "get": {
+                "tags": [
+                    "Guest"
+                ],
+                "summary": "Tabela gości wesela",
+                "operationId": "ba13faba9c30d75ce7386db1cee72e22",
+                "responses": {
+                    "200": {
+                        "description": "Lista gości"
                     },
                     "401": {
                         "description": "Brak autoryzacji"

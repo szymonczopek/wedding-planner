@@ -30,6 +30,8 @@ const items = ref([
 
 <style scoped>
 .app-menu {
+  border-radius: 10px;
+  overflow: hidden;
   width: 100%;
   border: none;
 }

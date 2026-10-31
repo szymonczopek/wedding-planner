@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('/guests')->group(function () {
         Route::get('/', [GuestController::class, 'index']);
+        Route::get('/list', [GuestController::class, 'list']);
         Route::post('/create', [GuestController::class, 'create']);
     });
 

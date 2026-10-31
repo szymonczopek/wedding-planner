@@ -17,5 +17,17 @@ export function useGuest() {
     return data ?? []
   }
 
-  return { searchAddresses, searchPolishAddresses }
+  async function fetchGuestsList() {
+    const { data } = await api.get('/guests/list')
+
+    return data ?? []
+  }
+
+  async function guestsTable() {
+    const { data } = await api.get('/guests')
+
+    return data ?? []
+  }
+
+  return { searchAddresses, searchPolishAddresses, fetchGuestsList, guestsTable }
 }

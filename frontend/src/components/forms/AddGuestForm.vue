@@ -10,6 +10,7 @@ import Select from 'primevue/select'
 import FormField from './FormField.vue'
 import api from '../../api/client.js'
 import {getValidationErrors} from '../../api/errors.js'
+import {acquaintanceTypes, diets} from '../../constants/guests.js'
 import {useAuth} from '../../composables/useAuth.js'
 import {useGuest} from '../../composables/useGuest.js'
 
@@ -20,32 +21,7 @@ const props = defineProps({
 const emit = defineEmits(['update:visible', 'created'])
 
 const {user} = useAuth()
-const {searchAddresses, searchPolishAddresses} = useGuest()
-
-const acquaintanceTypes = [
-  {label: 'Świadek', value: 'witness'},
-  {label: 'Rodzina bliska', value: 'close_family'},
-  {label: 'Rodzina daleka', value: 'distant_family'},
-  {label: 'Znajomy bliski', value: 'close_friend'},
-  {label: 'Znajomy daleki', value: 'distant_friend'},
-  {label: 'Sąsiad', value: 'neighbor'},
-  {label: 'Osoba towarzysząca', value: 'plus_one'},
-]
-
-const diets = [
-  {label: 'Standardowa', value: 'standard'},
-  {label: 'Wegetariańska', value: 'vegetarian'},
-  {label: 'Wegańska', value: 'vegan'},
-  {label: 'Keto', value: 'keto'},
-  {label: 'Lekkostrawna', value: 'light'},
-  {label: 'Bezglutenowa', value: 'gluten_free'},
-  {label: 'Bez laktozy', value: 'lactose_free'},
-  {label: 'Bez orzechów', value: 'nut_free'},
-  {label: 'Bez ryb i owoców morza', value: 'fish_and_seafood_free'},
-  {label: 'Halal', value: 'halal'},
-  {label: 'Koszerna', value: 'kosher'},
-  {label: 'Menu dziecięce', value: 'kids_menu'},
-]
+const {searchAddresses, searchPolishAddresses, fetchGuestsList} = useGuest()
 
 const isSubmitting = ref(false)
 const errors = ref({})
@@ -234,8 +210,7 @@ function clearPolishAddress() {
 
 async function loadGuests() {
   try {
-    const {data} = await api.get('/guests')
-    guests.value = data ?? []
+    guests.value = await fetchGuestsList()
   } catch {
     guests.value = []
   }

@@ -20,7 +20,7 @@ class GuestController extends Controller
     }
 
     #[OA\Get(
-        path: '/api/guests',
+        path: '/api/guests/list',
         summary: 'Lista gości wesela',
         security: [['sanctum' => []]],
         tags: ['Guest'],
@@ -44,9 +44,25 @@ class GuestController extends Controller
             new OA\Response(response: 422, description: 'Błąd walidacji'),
         ],
     )]
-    public function index(/*ListGuestsFormRequest $request*/): JsonResponse
+    public function list(): JsonResponse
     {
         return response()->json($this->guestService->getGuestsForWedding());
+    }
+    #[OA\Get(
+        path: '/api/guests',
+        summary: 'Tabela gości wesela',
+        security: [['sanctum' => []]],
+        tags: ['Guest'],
+        responses: [
+            new OA\Response(response: 200, description: 'Lista gości',),
+            new OA\Response(response: 401, description: 'Brak autoryzacji'),
+            new OA\Response(response: 403, description: 'Brak dostępu do wesela'),
+            new OA\Response(response: 422, description: 'Błąd walidacji'),
+        ],
+    )]
+    public function index(): JsonResponse
+    {
+        return response()->json($this->guestService->guestTable());
     }
 
     /**
