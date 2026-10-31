@@ -13,19 +13,6 @@ use Illuminate\Validation\Rules\Enum;
 
 class CreateGuestFormRequest extends FormRequest
 {
-    public function authorize(): bool
-    {
-        $weddingId = $this->input('wedding_id');
-
-        if (! is_string($weddingId) || $weddingId === '') {
-            return true;
-        }
-
-        $user = Auth::user();
-
-        return $user instanceof User && $user->weddings()->whereKey($weddingId)->exists();
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -33,9 +20,6 @@ class CreateGuestFormRequest extends FormRequest
      */
     public function rules(): array
     {
-        $weddingId = $this->input('wedding_id');
-        $weddingId = is_string($weddingId) ? $weddingId : null;
-
         return [
             'address_id' => ['sometimes', 'string', 'exists:App\Models\Address,id'],
             'address' => ['required_without:address_id', 'array'],
@@ -53,15 +37,10 @@ class CreateGuestFormRequest extends FormRequest
             'child' => ['required', 'boolean'],
             'groom_guest' => ['nullable', 'boolean'],
             'diet' => ['required', new Enum(DietsEnum::class)],
-            'wedding_id' => [
-                'required',
-                'string',
-                Rule::exists('weddings', 'id')->whereNull('deleted_at'),
-            ],
             'main_guest_id' => [
                 'sometimes',
                 Rule::exists('guests', 'id')
-                    ->where('wedding_id', $weddingId)
+                    ->where('wedding_id', auth()->user()->selectedWeddingId())
                     ->whereNull('deleted_at'),
             ],
         ];

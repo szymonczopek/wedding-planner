@@ -69,7 +69,7 @@ class AddressController extends Controller
         $data = $request->validated();
 
         return response()->json(
-            $this->addressService->searchForWedding($data['wedding_id'], $data['q']),
+            $this->addressService->searchForWedding(auth()->user()->selectedWeddingId(), $data['q']),
         );
     }
 

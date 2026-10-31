@@ -1,9 +1,9 @@
 import api from '../api/client.js'
 
 export function useGuest() {
-  async function searchAddresses(weddingId, query) {
+  async function searchAddresses(query) {
     const { data } = await api.get('/addresses/search', {
-      params: { wedding_id: weddingId, q: query },
+      params: { q: query },
     })
 
     return data ?? []
