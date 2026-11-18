@@ -34,7 +34,7 @@ class GuestService
 
             if (isset($data['address_id'])) {
                 $guest->address()->associate($data['address_id']);
-            } else {
+            } elseif (isset($data['address'])) {
                 $address = Address::create(CreateAddressDTO::fromRequest($data['address'])->toArray());
                 $guest->address()->associate($address);
             }

@@ -25,6 +25,7 @@ const {searchAddresses, searchPolishAddresses, fetchGuestsList} = useGuest()
 
 const isSubmitting = ref(false)
 const errors = ref({})
+const isCompanion = ref(false)
 const addressMode = ref('existing')
 const selectedAddress = ref(null)
 const addressSuggestions = ref([])
@@ -88,6 +89,7 @@ function resetForm() {
   Object.assign(form, emptyForm())
   errors.value = {}
   isSubmitting.value = false
+  isCompanion.value = false
   addressMode.value = 'existing'
   selectedAddress.value = null
   addressSuggestions.value = []
@@ -219,7 +221,12 @@ async function loadGuests() {
 async function submitGuest() {
   errors.value = {}
 
-  if (addressMode.value === 'existing' && !selectedAddressId.value) {
+  if (isCompanion.value) {
+    if (!form.main_guest_id) {
+      errors.value = {main_guest_id: ['Wybierz głównego gościa']}
+      return
+    }
+  } else if (addressMode.value === 'existing' && !selectedAddressId.value) {
     errors.value = {address_id: ['Wybierz adres z wyszukiwarki']}
     return
   }
@@ -245,17 +252,19 @@ async function submitGuest() {
       payload.main_guest_id = form.main_guest_id
     }
 
-    if (addressMode.value === 'existing') {
-      payload.address_id = selectedAddressId.value
-    } else {
-      payload.address = {
-        street: form.address.street || null,
-        house_number: form.address.house_number,
-        local_number: form.address.local_number || null,
-        city: form.address.city,
-        district: form.address.district || null,
-        postal_code: form.address.postal_code || null,
-        country: form.address.country || null,
+    if (!isCompanion.value) {
+      if (addressMode.value === 'existing') {
+        payload.address_id = selectedAddressId.value
+      } else {
+        payload.address = {
+          street: form.address.street || null,
+          house_number: form.address.house_number,
+          local_number: form.address.local_number || null,
+          city: form.address.city,
+          district: form.address.district || null,
+          postal_code: form.address.postal_code || null,
+          country: form.address.country || null,
+        }
       }
     }
 
@@ -273,6 +282,19 @@ async function submitGuest() {
 function closeModal() {
   emit('update:visible', false)
 }
+
+watch(isCompanion, (value) => {
+  if (value) {
+    form.acquaintance_type = 'plus_one'
+    return
+  }
+
+  form.main_guest_id = null
+
+  if (form.acquaintance_type === 'plus_one') {
+    form.acquaintance_type = null
+  }
+})
 
 watch(
     () => props.visible,
@@ -298,6 +320,10 @@ watch(
       @update:visible="emit('update:visible', $event)"
   >
     <form id="add-guest-form" class="guest-form" autocomplete="off" @submit.prevent="submitGuest">
+      <div class="checkbox-item">
+        <Checkbox v-model="isCompanion" inputId="guest-companion" binary/>
+        <label for="guest-companion">Osoba towarzysząca</label>
+      </div>
       1. Dane
       <div class="form-grid">
         <FormField id="guest-name" label="Imię" :error="errors.name?.[0]">
@@ -371,24 +397,27 @@ watch(
             <label for="guest-child">Dziecko</label>
           </div>
         </div>
-        <div class="full-width">
-          <FormField id="guest-main-guest" label="Główny gość (przy dodawaniu osoby towarzyszącej)" :error="errors.main_guest_id?.[0]">
-            <template #default="{ id, invalid }">
-              <Select
-                  :inputId="id"
-                  v-model="form.main_guest_id"
-                  :options="guestOptions"
-                  optionLabel="label"
-                  optionValue="value"
-                  filter
-                  showClear
-                  :invalid="invalid"
-                  fluid
-              />
-            </template>
-          </FormField>
+        <div v-if="isCompanion" class="full-width">
+          4. Czyja osoba towarzysząca?
+          <div class="mt-4">
+            <FormField id="guest-main-guest" label="Gość główny" :error="errors.main_guest_id?.[0]">
+              <template #default="{ id, invalid }">
+                <Select
+                    :inputId="id"
+                    v-model="form.main_guest_id"
+                    :options="guestOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    filter
+                    showClear
+                    :invalid="invalid"
+                    fluid
+                />
+              </template>
+            </FormField>
+          </div>
         </div>
-        <div class="address-mode">
+        <div v-if="!isCompanion" class="address-mode">
           4. Adres:
           <div class="address-mode-option">
             <RadioButton
@@ -399,7 +428,7 @@ watch(
             />
             <label for="address-mode-existing">Dołącz do zapisanego adresu istniejącego gościa</label>
           </div>
-          <div class="address-mode-option">
+          <div class="address-mode-option mb-4">
             <RadioButton
                 v-model="addressMode"
                 inputId="address-mode-new"
@@ -408,11 +437,9 @@ watch(
             />
             <label for="address-mode-new">Dodaj nowy adres</label>
           </div>
-        </div>
 
-        <div v-if="addressMode === 'existing'" class="form-grid">
-          <div class="full-width">
-            <FormField id="address-search" label="Wyszukiwarka adresu" :error="errors.address_id?.[0]">
+          <div v-if="!isCompanion && addressMode === 'existing'" class="form-grid">
+            <FormField class="full-width" id="address-search" label="Wyszukiwarka adresu" :error="errors.address_id?.[0]">
               <template #default="{ id, invalid }">
                 <AutoComplete
                     :inputId="id"
@@ -433,67 +460,91 @@ watch(
               </template>
             </FormField>
           </div>
-        </div>
 
-        <div v-else class="form-grid">
-          <div class="full-width">
-            <FormField
-                id="place-search-query"
-                label="Wyszukaj miejscowość lub ulicę"
-            >
-              <template #default="{ id, invalid }">
-                <AutoComplete
-                    :inputId="id"
-                    v-model="selectedPolishAddress"
-                    :suggestions="polishAddressSuggestions"
-                    optionLabel="label"
-                    dataKey="id"
-                    :delay="300"
-                    :minLength="2"
-                    :loading="isSearchingPolishAddress"
-                    :inputProps="addressSearchInputProps"
-                    showClear
-                    placeholder="np. Warszawa Puławska"
-                    emptySearchMessage="Brak wyników"
-                    :invalid="invalid"
-                    fluid
-                    @complete="searchPolishAddress"
-                    @option-select="selectPolishAddress"
-                    @clear="clearPolishAddress"
-                />
-              </template>
-            </FormField>
-          </div>
-          <FormField id="address-city" label="Miejscowość" :error="errors['address.city']?.[0]">
-            <template #default="{ id, invalid }">
-              <InputText
-                  :id="id"
-                  v-model="form.address.city"
-                  type="text"
-                  autocomplete="off"
-                  :invalid="invalid"
-                  fluid
-              />
-            </template>
-          </FormField>
-          <FormField id="address-street" label="Ulica" :error="errors['address.street']?.[0]">
-            <template #default="{ id, invalid }">
-              <InputText
-                  :id="id"
-                  v-model="form.address.street"
-                  type="text"
-                  autocomplete="off"
-                  :invalid="invalid"
-                  fluid
-              />
-            </template>
-          </FormField>
-          <div class="full-width">
-            <FormField id="address-district" label="Powiat" :error="errors['address.district']?.[0]">
+          <div v-else-if="!isCompanion" class="form-grid">
+            <div class="full-width">
+              <FormField
+                  id="place-search-query"
+                  label="Wyszukaj miejscowość lub ulicę"
+              >
+                <template #default="{ id, invalid }">
+                  <AutoComplete
+                      :inputId="id"
+                      v-model="selectedPolishAddress"
+                      :suggestions="polishAddressSuggestions"
+                      optionLabel="label"
+                      dataKey="id"
+                      :delay="300"
+                      :minLength="2"
+                      :loading="isSearchingPolishAddress"
+                      :inputProps="addressSearchInputProps"
+                      showClear
+                      placeholder="np. Warszawa Puławska"
+                      emptySearchMessage="Brak wyników"
+                      :invalid="invalid"
+                      fluid
+                      @complete="searchPolishAddress"
+                      @option-select="selectPolishAddress"
+                      @clear="clearPolishAddress"
+                  />
+                </template>
+              </FormField>
+            </div>
+            <FormField id="address-city" label="Miejscowość" :error="errors['address.city']?.[0]">
               <template #default="{ id, invalid }">
                 <InputText
                     :id="id"
-                    v-model="form.address.district"
+                    v-model="form.address.city"
+                    type="text"
+                    autocomplete="off"
+                    :invalid="invalid"
+                    fluid
+                />
+              </template>
+            </FormField>
+            <FormField id="address-street" label="Ulica" :error="errors['address.street']?.[0]">
+              <template #default="{ id, invalid }">
+                <InputText
+                    :id="id"
+                    v-model="form.address.street"
+                    type="text"
+                    autocomplete="off"
+                    :invalid="invalid"
+                    fluid
+                />
+              </template>
+            </FormField>
+            <div class="full-width">
+              <FormField id="address-district" label="Powiat" :error="errors['address.district']?.[0]">
+                <template #default="{ id, invalid }">
+                  <InputText
+                      :id="id"
+                      v-model="form.address.district"
+                      type="text"
+                      autocomplete="off"
+                      :invalid="invalid"
+                      fluid
+                  />
+                </template>
+              </FormField>
+            </div>
+            <FormField id="address-house-number" label="Numer domu" :error="errors['address.house_number']?.[0]">
+              <template #default="{ id, invalid }">
+                <InputText
+                    :id="id"
+                    v-model="form.address.house_number"
+                    type="text"
+                    autocomplete="off"
+                    :invalid="invalid"
+                    fluid
+                />
+              </template>
+            </FormField>
+            <FormField id="address-local-number" label="Numer lokalu" :error="errors['address.local_number']?.[0]">
+              <template #default="{ id, invalid }">
+                <InputText
+                    :id="id"
+                    v-model="form.address.local_number"
                     type="text"
                     autocomplete="off"
                     :invalid="invalid"
@@ -502,30 +553,6 @@ watch(
               </template>
             </FormField>
           </div>
-          <FormField id="address-house-number" label="Numer domu" :error="errors['address.house_number']?.[0]">
-            <template #default="{ id, invalid }">
-              <InputText
-                  :id="id"
-                  v-model="form.address.house_number"
-                  type="text"
-                  autocomplete="off"
-                  :invalid="invalid"
-                  fluid
-              />
-            </template>
-          </FormField>
-          <FormField id="address-local-number" label="Numer lokalu" :error="errors['address.local_number']?.[0]">
-            <template #default="{ id, invalid }">
-              <InputText
-                  :id="id"
-                  v-model="form.address.local_number"
-                  type="text"
-                  autocomplete="off"
-                  :invalid="invalid"
-                  fluid
-              />
-            </template>
-          </FormField>
         </div>
       </div>
 
