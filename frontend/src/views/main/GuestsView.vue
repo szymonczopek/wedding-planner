@@ -9,6 +9,7 @@ import AddGuestForm from '../../components/forms/AddGuestForm.vue'
 import {
   acquaintanceTypes,
   acquaintanceTypeSeverities,
+  isGroomGuestTypeSeverities,
   diets,
   dietSeverities,
   optionLabel,
@@ -55,7 +56,7 @@ function boolLabel(value) {
   return value ? 'Tak' : 'Nie'
 }
 
-function groomGuestLabel(value) {
+function isGroomGuestLabel(value) {
   if (value === true) {
     return 'Pan Młody'
   }
@@ -140,7 +141,10 @@ onMounted(loadGuests)
         </Column>
         <Column header="Strona">
           <template #body="{data}">
-            <Tag :value="groomGuestLabel(data.groom_guest)"/>
+            <Tag
+                :value="isGroomGuestLabel(data.groom_guest)"
+                :severity="isGroomGuestTypeSeverities[data.groom_guest]"
+            />
           </template>
         </Column>
         <Column header="Zaproszenie przygotowane">

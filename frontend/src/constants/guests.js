@@ -33,6 +33,12 @@ export const acquaintanceTypeSeverities = {
   plus_one: 'contrast',
 }
 
+export const isGroomGuestTypeSeverities = {
+  true: 'info',
+  false: 'danger',
+  null: 'warning',
+}
+
 export const dietSeverities = {
   standard: 'secondary',
   vegetarian: 'success',
