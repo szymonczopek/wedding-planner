@@ -22,7 +22,7 @@ const isModalOpen = ref(false)
 const guests = ref([])
 const expandedRowGroups = ref([])
 const groupByAddress = ref(true)
-const selectedGuest = ref(null);
+const selectedGuest = ref([]);
 
 function formatAddress(address) {
   const parts = []
@@ -42,15 +42,51 @@ function formatAddress(address) {
   return parts.filter(Boolean).join(', ')
 }
 
+function guestFullName(guest) {
+  return [guest.name, guest.surname].filter(Boolean).join(' ')
+}
+
 const guestRows = computed(() =>
-  guests.value.flatMap((address) =>
-    (address.guests ?? []).map((guest) => ({
-      ...guest,
-      address_id: address.id,
-      flat_address: formatAddress(address),
-      full_name: [guest.name, guest.surname].filter(Boolean).join(' '),
-    })),
-  ),
+  guests.value.flatMap((address) => {
+    const flatAddress = formatAddress(address)
+
+    return (address.guests ?? []).flatMap((guest) => {
+      const fullName = guestFullName(guest)
+      const mainSortName = [fullName, guest.id].join('\u0000')
+      const mainRow = {
+        ...guest,
+        address_id: address.id,
+        flat_address: flatAddress,
+        full_name: fullName,
+        is_companion: false,
+        sort_name: mainSortName,
+        group_sort_key: [flatAddress, address.id, mainSortName].join('\u0000'),
+      }
+
+      const companion = Array.isArray(guest.companion)
+        ? guest.companion[0] ?? null
+        : guest.companion
+
+      if (!companion) {
+        return [mainRow]
+      }
+
+      const companionSortName = `${mainSortName}\uffff`
+
+      return [
+        mainRow,
+        {
+          ...companion,
+          address_id: address.id,
+          flat_address: flatAddress,
+          full_name: guestFullName(companion),
+          is_companion: true,
+          sort_name: companionSortName,
+          group_sort_key: [flatAddress, address.id, companionSortName].join('\u0000'),
+        },
+      ]
+    })
+  }),
 )
 
 function boolLabel(value) {
@@ -90,7 +126,7 @@ onMounted(loadGuests)
       <div class="flex items-center gap-2">
         <ToggleSwitch v-model="groupByAddress" inputId="group-by-address"/>
         <label for="group-by-address">Grupuj po adresach</label>
-        <Button label="Usuń zaznaczenie" v-if="selectedGuest" @click="() => {selectedGuest = null}"></Button>
+        <Button label="Usuń zaznaczenie" v-if="selectedGuest.length > 0" @click="() => {selectedGuest = []}"></Button>
       </div>
       <Button label="Dodaj gościa" @click="isModalOpen = true"/>
     </div>
@@ -107,13 +143,19 @@ onMounted(loadGuests)
           v-model:expandedRowGroups="expandedRowGroups"
           :expandableRowGroups="groupByAddress"
           sortMode="single"
-          :sortField="groupByAddress ? 'flat_address' : 'full_name'"
+          :sortField="groupByAddress ? 'group_sort_key' : 'sort_name'"
           sortOrder="1"
           row-hover
+          :rowClass="(data) => (data.is_companion ? 'guest-row companion-row' : 'guest-row')"
           v-model:selection="selectedGuest"
           selectionMode="multiple"
      >
-        <Column field="full_name" header="Gość" />
+        <Column header="Gość">
+          <template #body="{data}">
+            {{ data.full_name }}
+            <span v-if="data.is_companion" class="p-6 companion-label">Osoba Towarzysząca </span>
+          </template>
+        </Column>
         <Column
             v-if="!groupByAddress"
             field="flat_address"
@@ -196,5 +238,18 @@ onMounted(loadGuests)
   .guest-table {
     border-radius: 15px;
     overflow: hidden;
+  }
+
+  .guest-table :deep(.companion-row) > td {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .guest-table :deep(.guest-row) > td:first-child {
+    padding-left: 5rem;
+  }
+
+  .companion-label {
+    margin-right: 0.25rem;
+    color: #a3a3a3;
   }
 </style>
