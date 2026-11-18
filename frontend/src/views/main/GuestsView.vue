@@ -156,12 +156,14 @@ onMounted(loadGuests)
      >
         <Column header="Gość">
           <template #body="{data}">
-            {{ data.full_name }}
-            <span
-                v-if="data.is_companion"
-                v-tooltip.top="`Główny gość: ${data.main_guest_name}`"
-                class="p-6 companion-label"
-            >Osoba Towarzysząca </span>
+            <div class="guest-name">
+              <span>{{ data.full_name }}</span>
+              <span
+                  v-if="data.is_companion"
+                  v-tooltip.top="`Główny gość: ${data.main_guest_name}`"
+                  class="companion-label"
+              >Osoba Towarzysząca</span>
+            </div>
           </template>
         </Column>
         <Column
@@ -256,8 +258,14 @@ onMounted(loadGuests)
     padding-left: 5rem;
   }
 
+  .guest-name {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .companion-label {
-    margin-right: 0.25rem;
+    margin-top: 0.15rem;
     color: #a3a3a3;
     cursor: help;
   }
