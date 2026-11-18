@@ -372,7 +372,7 @@ watch(
           </div>
         </div>
         <div class="full-width">
-          <FormField id="guest-main-guest" label="Główny gość (opcjonalnie)" :error="errors.main_guest_id?.[0]">
+          <FormField id="guest-main-guest" label="Główny gość (przy dodawaniu osoby towarzyszącej)" :error="errors.main_guest_id?.[0]">
             <template #default="{ id, invalid }">
               <Select
                   :inputId="id"

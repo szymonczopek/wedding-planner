@@ -50,6 +50,6 @@ class GuestService
      */
     public function guestTable(): Collection
     {
-        return Address::whereHas('guests', fn($q) => $q->where('wedding_id', auth()->user()->selectedWeddingId()))->with(['guests'])->get();
+        return Address::whereHas('guests', fn($q) => $q->where('wedding_id', auth()->user()->selectedWeddingId())->where('main_guest_id', null))->with(['guests.companion'])->get();
     }
 }

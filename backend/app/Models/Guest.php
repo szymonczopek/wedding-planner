@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
@@ -73,8 +73,8 @@ class Guest extends Model
         return $this->belongsTo(Guest::class, 'main_guest_id');
     }
 
-    public function companions(): HasMany
+    public function companion(): HasOne
     {
-        return $this->hasMany(Guest::class, 'main_guest_id');
+        return $this->hasOne(Guest::class, 'main_guest_id');
     }
 }

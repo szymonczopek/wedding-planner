@@ -22,6 +22,7 @@ const isModalOpen = ref(false)
 const guests = ref([])
 const expandedRowGroups = ref([])
 const groupByAddress = ref(true)
+const selectedGuest = ref(null);
 
 function formatAddress(address) {
   const parts = []
@@ -89,8 +90,9 @@ onMounted(loadGuests)
       <div class="flex items-center gap-2">
         <ToggleSwitch v-model="groupByAddress" inputId="group-by-address"/>
         <label for="group-by-address">Grupuj po adresach</label>
+        <Button label="Usuń zaznaczenie" v-if="selectedGuest" @click="() => {selectedGuest = null}"></Button>
       </div>
-      <Button label="Dodaj gościa" icon="" class="black-button" @click="isModalOpen = true"/>
+      <Button label="Dodaj gościa" @click="isModalOpen = true"/>
     </div>
 
     <AddGuestForm v-model:visible="isModalOpen" @created="loadGuests"/>
@@ -107,6 +109,9 @@ onMounted(loadGuests)
           sortMode="single"
           :sortField="groupByAddress ? 'flat_address' : 'full_name'"
           sortOrder="1"
+          row-hover
+          v-model:selection="selectedGuest"
+          selectionMode="multiple"
      >
         <Column field="full_name" header="Gość" />
         <Column

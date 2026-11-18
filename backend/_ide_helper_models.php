@@ -14,12 +14,13 @@
 namespace App\Models{
 /**
  * @property string $id
- * @property string $street
+ * @property string|null $street
  * @property string $house_number
  * @property string|null $local_number
  * @property string $city
- * @property string $postal_code
- * @property string $country
+ * @property string|null $postal_code
+ * @property string|null $country
+ * @property string|null $district
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Guest> $guests
  * @property-read int|null $guests_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address newModelQuery()
@@ -27,6 +28,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereCity($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereCountry($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereDistrict($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereHouseNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereLocalNumber($value)
@@ -150,7 +152,7 @@ namespace App\Models{
  * @property string $surname
  * @property \App\Enums\AcquaintanceTypesEnum $acquaintance_type
  * @property bool $child
- * @property bool $groom_guest
+ * @property bool|null $groom_guest
  * @property bool $invitation_prepared
  * @property bool $invitation_delivered
  * @property bool $confirmed_attendance
@@ -161,8 +163,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\Address|null $address
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Guest> $companions
- * @property-read int|null $companions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Guest> $companion
+ * @property-read int|null $companion_count
  * @property-read \App\Models\User $creator
  * @property-read Guest|null $mainGuest
  * @property-read \App\Models\Table|null $table
@@ -339,7 +341,7 @@ namespace App\Models{
  * @property string $wedding_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property bool $is_active
+ * @property bool $selected
  * @property-read \App\Models\User $user
  * @property-read \App\Models\Wedding|null $wedding
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser newModelQuery()
@@ -347,8 +349,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereIsActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereRole($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereSelected($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|WeddingUser whereWeddingId($value)
