@@ -5,6 +5,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Tag from 'primevue/tag'
 import ToggleSwitch from 'primevue/toggleswitch'
+import Tooltip from 'primevue/tooltip'
 import AddGuestForm from '../../components/forms/AddGuestForm.vue'
 import {
   acquaintanceTypes,
@@ -17,6 +18,8 @@ import {
 import {useGuest} from '../../composables/useGuest.js'
 
 const {guestsTable} = useGuest()
+
+const vTooltip = Tooltip
 
 const isModalOpen = ref(false)
 const guests = ref([])
@@ -81,6 +84,7 @@ const guestRows = computed(() =>
           flat_address: flatAddress,
           full_name: guestFullName(companion),
           is_companion: true,
+          main_guest_name: fullName,
           sort_name: companionSortName,
           group_sort_key: [flatAddress, address.id, companionSortName].join('\u0000'),
         },
@@ -153,7 +157,11 @@ onMounted(loadGuests)
         <Column header="Gość">
           <template #body="{data}">
             {{ data.full_name }}
-            <span v-if="data.is_companion" class="p-6 companion-label">Osoba Towarzysząca </span>
+            <span
+                v-if="data.is_companion"
+                v-tooltip.top="`Główny gość: ${data.main_guest_name}`"
+                class="p-6 companion-label"
+            >Osoba Towarzysząca </span>
           </template>
         </Column>
         <Column
@@ -251,5 +259,6 @@ onMounted(loadGuests)
   .companion-label {
     margin-right: 0.25rem;
     color: #a3a3a3;
+    cursor: help;
   }
 </style>
