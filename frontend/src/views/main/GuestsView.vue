@@ -1,8 +1,9 @@
 <script setup>
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, ref, watch} from 'vue'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import Paginator from 'primevue/paginator'
 import Tag from 'primevue/tag'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Tooltip from 'primevue/tooltip'
@@ -26,6 +27,8 @@ const guests = ref([])
 const expandedRowGroups = ref([])
 const groupByAddress = ref(true)
 const selectedGuest = ref([]);
+const rowsPerPage = ref(5)
+const first = ref(0)
 
 function formatAddress(address) {
   const parts = []
@@ -49,8 +52,8 @@ function guestFullName(guest) {
   return [guest.name, guest.surname].filter(Boolean).join(' ')
 }
 
-const guestRows = computed(() =>
-  guests.value.flatMap((address) => {
+function flattenAddresses(addresses) {
+  return addresses.flatMap((address) => {
     const flatAddress = formatAddress(address)
 
     return (address.guests ?? []).flatMap((guest) => {
@@ -90,8 +93,45 @@ const guestRows = computed(() =>
         },
       ]
     })
-  }),
+  })
+}
+
+const addressGroups = computed(() =>
+  guests.value
+    .filter((address) => address.guests?.length)
+    .sort((a, b) => formatAddress(a).localeCompare(formatAddress(b), 'pl')),
 )
+
+const allGuestRows = computed(() =>
+  flattenAddresses(addressGroups.value)
+    .sort((a, b) => a.sort_name.localeCompare(b.sort_name, 'pl')),
+)
+
+const paginatedGroups = computed(() =>
+  addressGroups.value.slice(first.value, first.value + rowsPerPage.value),
+)
+
+const guestRows = computed(() =>
+  groupByAddress.value
+    ? flattenAddresses(paginatedGroups.value)
+    : allGuestRows.value.slice(first.value, first.value + rowsPerPage.value),
+)
+
+const totalRecords = computed(() =>
+  groupByAddress.value ? addressGroups.value.length : allGuestRows.value.length,
+)
+
+watch(groupByAddress, () => {
+  first.value = 0
+})
+
+watch([rowsPerPage, totalRecords], () => {
+  const lastPage = Math.max(0, Math.ceil(totalRecords.value / rowsPerPage.value) - 1)
+
+  if (first.value > lastPage * rowsPerPage.value) {
+    first.value = lastPage * rowsPerPage.value
+  }
+})
 
 function boolLabel(value) {
   return value ? 'Tak' : 'Nie'
@@ -119,6 +159,8 @@ async function loadGuests() {
   expandedRowGroups.value = guests.value
     .filter((address) => address.guests?.length)
     .map((address) => address.id)
+
+  first.value = 0
 }
 
 onMounted(loadGuests)
@@ -233,6 +275,16 @@ onMounted(loadGuests)
           <span>{{ data.flat_address }}</span>
         </template>
       </DataTable>
+
+      <Paginator
+          class="mt-4"
+          v-model:first="first"
+          v-model:rows="rowsPerPage"
+          :totalRecords="totalRecords"
+          :rowsPerPageOptions="[5, 10, 20, 50]"
+          template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown CurrentPageReport"
+          currentPageReportTemplate="{first}–{last} z {totalRecords}"
+      />
     </div>
   </div>
 </template>
