@@ -38,6 +38,11 @@ class Wedding extends Model
         });
     }
 
+    public static function selectedWedding()
+    {
+        return auth()->user()->selectedWeddingId();
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

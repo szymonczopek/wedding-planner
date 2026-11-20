@@ -6,6 +6,7 @@ use App\Enums\AcquaintanceTypesEnum;
 use App\Enums\DietsEnum;
 use App\Http\Requests\FormRequest;
 use App\Models\User;
+use App\Models\Wedding;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -40,7 +41,7 @@ class CreateGuestFormRequest extends FormRequest
             'main_guest_id' => [
                 'sometimes',
                 Rule::exists('guests', 'id')
-                    ->where('wedding_id', auth()->user()->selectedWeddingId())
+                    ->where('wedding_id', Wedding::selectedWedding())
                     ->whereNull('deleted_at'),
             ],
         ];

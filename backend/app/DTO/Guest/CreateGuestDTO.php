@@ -4,6 +4,7 @@ namespace App\DTO\Guest;
 
 use App\Enums\AcquaintanceTypesEnum;
 use App\Enums\DietsEnum;
+use App\Models\Wedding;
 
 class CreateGuestDTO
 {
@@ -37,7 +38,7 @@ class CreateGuestDTO
             invitation_delivered: false,
             confirmed_attendance: false,
             diet: DietsEnum::from($data['diet']),
-            wedding_id: auth()->user()->selectedWeddingId(),
+            wedding_id: Wedding::selectedWedding(),
             created_by: auth()->user()->id,
             main_guest_id: $data['main_guest_id'] ?? null,
         );

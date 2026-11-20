@@ -3,6 +3,7 @@
 namespace App\Services\Address;
 
 use App\Models\Address;
+use App\Models\Wedding;
 use Illuminate\Database\Eloquent\Collection;
 
 class AddressService
@@ -10,12 +11,12 @@ class AddressService
     /**
      * @return Collection<int, Address>
      */
-    public function searchForWedding(string $weddingId, string $query): Collection
+    public function searchForWedding(string $query): Collection
     {
         $terms = preg_split('/\s+/', trim($query), -1, PREG_SPLIT_NO_EMPTY) ?: [];
 
         return Address::query()
-            ->whereHas('guests', fn ($query) => $query->where('wedding_id', $weddingId))
+            ->whereHas('guests', fn ($query) => $query->where('wedding_id', Wedding::selectedWedding()))
             ->when($terms !== [], function ($query) use ($terms) {
                 foreach ($terms as $term) {
                     $like = '%'.$term.'%';

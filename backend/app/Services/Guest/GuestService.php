@@ -7,6 +7,7 @@ use App\DTO\Guest\CreateGuestDTO;
 use App\Http\Requests\Guest\CreateGuestFormRequest;
 use App\Models\Address;
 use App\Models\Guest;
+use App\Models\Wedding;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -17,7 +18,7 @@ class GuestService
      */
     public function getGuestsForWedding(): Collection
     {
-        return Guest::where('wedding_id', auth()->user()->selectedWeddingId())
+        return Guest::where('wedding_id', Wedding::selectedWedding())
             ->orderBy('surname')
             ->orderBy('name')
             ->get();
@@ -50,6 +51,6 @@ class GuestService
      */
     public function guestTable(): Collection
     {
-        return Address::whereHas('guests', fn($q) => $q->where('wedding_id', auth()->user()->selectedWeddingId()))->with(['guests.companion'])->get();
+        return Address::whereHas('guests', fn($q) => $q->where('wedding_id', Wedding::selectedWedding()))->with(['guests.companion'])->get();
     }
 }
