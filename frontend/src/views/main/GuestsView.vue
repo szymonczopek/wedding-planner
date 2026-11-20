@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted, ref, watch} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -18,17 +18,18 @@ import {
 } from '../../constants/guests.js'
 import {useGuest} from '../../composables/useGuest.js'
 
-const {guestsTable} = useGuest()
+const {addressesTable, guestsPage} = useGuest()
 
 const vTooltip = Tooltip
 
 const isModalOpen = ref(false)
-const guests = ref([])
+const tableData = ref([])
 const expandedRowGroups = ref([])
 const groupByAddress = ref(true)
 const selectedGuest = ref([]);
-const rowsPerPage = ref(5)
+const rowsPerPage = ref(10)
 const first = ref(0)
+const totalRecords = ref(0)
 
 function formatAddress(address) {
   const parts = []
@@ -96,42 +97,45 @@ function flattenAddresses(addresses) {
   })
 }
 
-const addressGroups = computed(() =>
-  guests.value
-    .filter((address) => address.guests?.length)
-    .sort((a, b) => formatAddress(a).localeCompare(formatAddress(b), 'pl')),
-)
+function flattenGuests(guestsList) {
+  return guestsList.flatMap((guest) => {
+    const flatAddress = guest.address ? formatAddress(guest.address) : ''
+    const fullName = guestFullName(guest)
+    const mainRow = {
+      ...guest,
+      address_id: guest.address_id ?? guest.address?.id ?? null,
+      flat_address: flatAddress,
+      full_name: fullName,
+      is_companion: false,
+    }
 
-const allGuestRows = computed(() =>
-  flattenAddresses(addressGroups.value)
-    .sort((a, b) => a.sort_name.localeCompare(b.sort_name, 'pl')),
-)
+    const companion = Array.isArray(guest.companion)
+      ? guest.companion[0] ?? null
+      : guest.companion
 
-const paginatedGroups = computed(() =>
-  addressGroups.value.slice(first.value, first.value + rowsPerPage.value),
-)
+    if (!companion) {
+      return [mainRow]
+    }
+
+    return [
+      mainRow,
+      {
+        ...companion,
+        address_id: mainRow.address_id,
+        flat_address: flatAddress,
+        full_name: guestFullName(companion),
+        is_companion: true,
+        main_guest_name: fullName,
+      },
+    ]
+  })
+}
 
 const guestRows = computed(() =>
   groupByAddress.value
-    ? flattenAddresses(paginatedGroups.value)
-    : allGuestRows.value.slice(first.value, first.value + rowsPerPage.value),
+    ? flattenAddresses(tableData.value)
+    : flattenGuests(tableData.value),
 )
-
-const totalRecords = computed(() =>
-  groupByAddress.value ? addressGroups.value.length : allGuestRows.value.length,
-)
-
-watch(groupByAddress, () => {
-  first.value = 0
-})
-
-watch([rowsPerPage, totalRecords], () => {
-  const lastPage = Math.max(0, Math.ceil(totalRecords.value / rowsPerPage.value) - 1)
-
-  if (first.value > lastPage * rowsPerPage.value) {
-    first.value = lastPage * rowsPerPage.value
-  }
-})
 
 function boolLabel(value) {
   return value ? 'Tak' : 'Nie'
@@ -149,18 +153,54 @@ function isGroomGuestLabel(value) {
   return 'Wspólny'
 }
 
+let requestToken = 0
+
 async function loadGuests() {
+  const token = ++requestToken
+  const params = {first: first.value, rowsPerPage: rowsPerPage.value}
+
   try {
-    guests.value = await guestsTable()
+    const response = groupByAddress.value
+      ? await addressesTable(params)
+      : await guestsPage(params)
+
+    if (token !== requestToken) {
+      return
+    }
+
+    tableData.value = response.data
+    totalRecords.value = response.total
   } catch {
-    guests.value = []
+    if (token !== requestToken) {
+      return
+    }
+
+    tableData.value = []
+    totalRecords.value = 0
   }
 
-  expandedRowGroups.value = guests.value
-    .filter((address) => address.guests?.length)
-    .map((address) => address.id)
+  expandedRowGroups.value = groupByAddress.value
+    ? tableData.value
+      .filter((address) => address.guests?.length)
+      .map((address) => address.id)
+    : []
+}
 
+function onPageChange(event) {
+  first.value = event.first
+  rowsPerPage.value = event.rows
+  loadGuests()
+}
+
+function onGroupChange(value) {
+  groupByAddress.value = value
   first.value = 0
+  loadGuests()
+}
+
+function onCreated() {
+  first.value = 0
+  loadGuests()
 }
 
 onMounted(loadGuests)
@@ -170,14 +210,18 @@ onMounted(loadGuests)
   <div>
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <ToggleSwitch v-model="groupByAddress" inputId="group-by-address"/>
+        <ToggleSwitch
+            v-model="groupByAddress"
+            inputId="group-by-address"
+            @update:model-value="onGroupChange"
+        />
         <label for="group-by-address">Grupuj po adresach</label>
         <Button label="Usuń zaznaczenie" v-if="selectedGuest.length > 0" @click="() => {selectedGuest = []}"></Button>
       </div>
       <Button label="Dodaj gościa" @click="isModalOpen = true"/>
     </div>
 
-    <AddGuestForm v-model:visible="isModalOpen" @created="loadGuests"/>
+    <AddGuestForm v-model:visible="isModalOpen" @created="onCreated"/>
 
     <div class="mt-6 table">
       <DataTable
@@ -188,9 +232,6 @@ onMounted(loadGuests)
           :groupRowsBy="groupByAddress ? 'address_id' : null"
           v-model:expandedRowGroups="expandedRowGroups"
           :expandableRowGroups="groupByAddress"
-          sortMode="single"
-          :sortField="groupByAddress ? 'group_sort_key' : 'sort_name'"
-          sortOrder="1"
           row-hover
           :rowClass="(data) => (data.is_companion ? 'guest-row companion-row' : 'guest-row')"
           v-model:selection="selectedGuest"
@@ -284,6 +325,7 @@ onMounted(loadGuests)
           :rowsPerPageOptions="[5, 10, 20, 50]"
           template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown CurrentPageReport"
           currentPageReportTemplate="{first}–{last} z {totalRecords}"
+          @page="onPageChange"
       />
     </div>
   </div>

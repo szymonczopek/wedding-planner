@@ -23,11 +23,21 @@ export function useGuest() {
     return data ?? []
   }
 
-  async function guestsTable() {
-    const { data } = await api.get('/guests')
+  async function addressesTable({ first = 0, rowsPerPage = 10 } = {}) {
+    const { data } = await api.get('/guests/address-table', {
+      params: { first, rowsPerPage },
+    })
 
-    return data ?? []
+    return { data: data?.data ?? [], total: data?.total ?? 0 }
   }
 
-  return { searchAddresses, searchPolishAddresses, fetchGuestsList, guestsTable }
+  async function guestsPage({ first = 0, rowsPerPage = 15 } = {}) {
+    const { data } = await api.get('/guests/guest-table', {
+      params: { first, rowsPerPage },
+    })
+
+    return { data: data?.data ?? [], total: data?.total ?? 0 }
+  }
+
+  return { searchAddresses, searchPolishAddresses, fetchGuestsList, addressesTable, guestsPage }
 }

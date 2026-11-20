@@ -5,6 +5,7 @@ namespace App\Services\Guest;
 use App\DTO\Address\CreateAddressDTO;
 use App\DTO\Guest\CreateGuestDTO;
 use App\Http\Requests\Guest\CreateGuestFormRequest;
+use App\Http\Requests\Guest\ListGuestsFormRequest;
 use App\Models\Address;
 use App\Models\Guest;
 use App\Models\Wedding;
@@ -47,10 +48,64 @@ class GuestService
     }
 
     /**
-     * @return Collection
+     * @return array{data: Collection<int, Address>, total: int}
      */
-    public function guestTable(): Collection
+    public function addressTable(ListGuestsFormRequest $request): array
     {
-        return Address::whereHas('guests', fn($q) => $q->where('wedding_id', Wedding::selectedWedding()))->with(['guests.companion'])->get();
+        $first = $request->integer('first', 0);
+        $rowsPerPage = $request->integer('rowsPerPage', 15);
+        $weddingId = Wedding::selectedWedding();
+
+        $query = Address::query()
+            ->whereHas('guests', fn ($q) => $q
+                ->where('wedding_id', $weddingId)
+                ->whereNull('main_guest_id'));
+
+        $total = (clone $query)->count();
+
+        $data = $query
+            ->with(['guests' => fn ($q) => $q
+                ->where('wedding_id', $weddingId)
+                ->whereNull('main_guest_id')
+                ->with('companion')
+                ->orderBy('surname')
+                ->orderBy('name')
+                ->orderBy('id')])
+            ->orderBy('street')
+            ->orderBy('house_number')
+            ->orderBy('city')
+            ->orderBy('id')
+            ->skip($first)
+            ->take($rowsPerPage)
+            ->get();
+
+        return ['data' => $data, 'total' => $total];
+    }
+
+    /**
+     * @return array{data: Collection<int, Guest>, total: int}
+     */
+    public function guestsTable(ListGuestsFormRequest $request): array
+    {
+        $first = $request->integer('first', 0);
+        $rowsPerPage = $request->integer('rowsPerPage', 15);
+        $weddingId = Wedding::selectedWedding();
+
+        $query = Guest::query()
+            ->where('wedding_id', $weddingId)
+            ->whereNull('main_guest_id');
+
+        $total = (clone $query)->count();
+
+        $data = $query
+            ->with(['address', 'companion'])
+            ->orderBy('surname')
+            ->orderBy('name')
+            ->orderBy('id')
+            ->skip($first)
+            ->take($rowsPerPage)
+            ->get();
+
+        return ['data' => $data, 'total' => $total];
     }
 }

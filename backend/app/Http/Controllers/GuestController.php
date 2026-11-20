@@ -48,21 +48,85 @@ class GuestController extends Controller
     {
         return response()->json($this->guestService->getGuestsForWedding());
     }
+
     #[OA\Get(
-        path: '/api/guests',
-        summary: 'Tabela gości wesela',
+        path: '/api/guests/address-table',
+        summary: 'Tabela adresów z gośćmi wesela',
         security: [['sanctum' => []]],
         tags: ['Guest'],
+        parameters: [
+            new OA\Parameter(
+                name: 'first',
+                description: 'Liczba adresów do pominięcia',
+                in: 'query',
+                schema: new OA\Schema(type: 'integer', minimum: 0, default: 0),
+            ),
+            new OA\Parameter(
+                name: 'rowsPerPage',
+                description: 'Liczba adresów na stronę',
+                in: 'query',
+                schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 100, default: 15),
+            ),
+        ],
         responses: [
-            new OA\Response(response: 200, description: 'Lista gości',),
+            new OA\Response(
+                response: 200,
+                description: 'Strona adresów wraz z gośćmi',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'data', type: 'array', items: new OA\Items(type: 'object')),
+                        new OA\Property(property: 'total', type: 'integer', example: 42),
+                    ],
+                ),
+            ),
             new OA\Response(response: 401, description: 'Brak autoryzacji'),
             new OA\Response(response: 403, description: 'Brak dostępu do wesela'),
             new OA\Response(response: 422, description: 'Błąd walidacji'),
         ],
     )]
-    public function index(): JsonResponse
+    public function addressTable(ListGuestsFormRequest $request): JsonResponse
     {
-        return response()->json($this->guestService->guestTable());
+        return response()->json($this->guestService->addressTable($request));
+    }
+
+    #[OA\Get(
+        path: '/api/guests/guest-table',
+        summary: 'Tabela gości wesela',
+        security: [['sanctum' => []]],
+        tags: ['Guest'],
+        parameters: [
+            new OA\Parameter(
+                name: 'first',
+                description: 'Liczba gości do pominięcia',
+                in: 'query',
+                schema: new OA\Schema(type: 'integer', minimum: 0, default: 0),
+            ),
+            new OA\Parameter(
+                name: 'rowsPerPage',
+                description: 'Liczba gości na stronę',
+                in: 'query',
+                schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 100, default: 15),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Strona gości wraz z adresami',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'data', type: 'array', items: new OA\Items(type: 'object')),
+                        new OA\Property(property: 'total', type: 'integer', example: 42),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Brak autoryzacji'),
+            new OA\Response(response: 403, description: 'Brak dostępu do wesela'),
+            new OA\Response(response: 422, description: 'Błąd walidacji'),
+        ],
+    )]
+    public function guestTable(ListGuestsFormRequest $request): JsonResponse
+    {
+        return response()->json($this->guestService->guestsTable($request));
     }
 
     /**
