@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, reactive, ref} from 'vue'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -18,7 +18,7 @@ import {
 } from '../../constants/guests.js'
 import {useGuest} from '../../composables/useGuest.js'
 
-const {addressesTable, guestsPage} = useGuest()
+const {addressesTable, guestsTable} = useGuest()
 
 const vTooltip = Tooltip
 
@@ -27,9 +27,13 @@ const tableData = ref([])
 const expandedRowGroups = ref([])
 const groupByAddress = ref(true)
 const selectedGuest = ref([]);
-const rowsPerPage = ref(10)
-const first = ref(0)
-const totalRecords = ref(0)
+
+const addressPagination = reactive({first: 0, rowsPerPage: 10, total: 0})
+const guestPagination = reactive({first: 0, rowsPerPage: 10, total: 0})
+
+const pagination = computed(() =>
+  groupByAddress.value ? addressPagination : guestPagination,
+)
 
 function formatAddress(address) {
   const parts = []
@@ -157,26 +161,27 @@ let requestToken = 0
 
 async function loadGuests() {
   const token = ++requestToken
-  const params = {first: first.value, rowsPerPage: rowsPerPage.value}
+  const state = pagination.value
+  const params = {first: state.first, rowsPerPage: state.rowsPerPage}
 
   try {
     const response = groupByAddress.value
       ? await addressesTable(params)
-      : await guestsPage(params)
+      : await guestsTable(params)
 
     if (token !== requestToken) {
       return
     }
 
     tableData.value = response.data
-    totalRecords.value = response.total
+    state.total = response.total
   } catch {
     if (token !== requestToken) {
       return
     }
 
     tableData.value = []
-    totalRecords.value = 0
+    state.total = 0
   }
 
   expandedRowGroups.value = groupByAddress.value
@@ -187,19 +192,20 @@ async function loadGuests() {
 }
 
 function onPageChange(event) {
-  first.value = event.first
-  rowsPerPage.value = event.rows
+  const state = pagination.value
+
+  state.first = event.first
+  state.rowsPerPage = event.rows
   loadGuests()
 }
 
 function onGroupChange(value) {
   groupByAddress.value = value
-  first.value = 0
   loadGuests()
 }
 
 function onCreated() {
-  first.value = 0
+  pagination.value.first = 0
   loadGuests()
 }
 
@@ -319,9 +325,9 @@ onMounted(loadGuests)
 
       <Paginator
           class="mt-4"
-          v-model:first="first"
-          v-model:rows="rowsPerPage"
-          :totalRecords="totalRecords"
+          :first="pagination.first"
+          :rows="pagination.rowsPerPage"
+          :totalRecords="pagination.total"
           :rowsPerPageOptions="[5, 10, 20, 50]"
           template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown CurrentPageReport"
           currentPageReportTemplate="{first}–{last} z {totalRecords}"

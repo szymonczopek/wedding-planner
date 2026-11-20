@@ -31,7 +31,7 @@ export function useGuest() {
     return { data: data?.data ?? [], total: data?.total ?? 0 }
   }
 
-  async function guestsPage({ first = 0, rowsPerPage = 15 } = {}) {
+  async function guestsTable({ first = 0, rowsPerPage = 10 } = {}) {
     const { data } = await api.get('/guests/guest-table', {
       params: { first, rowsPerPage },
     })
@@ -39,5 +39,5 @@ export function useGuest() {
     return { data: data?.data ?? [], total: data?.total ?? 0 }
   }
 
-  return { searchAddresses, searchPolishAddresses, fetchGuestsList, addressesTable, guestsPage }
+  return { searchAddresses, searchPolishAddresses, fetchGuestsList, addressesTable, guestsTable }
 }
