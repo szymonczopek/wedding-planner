@@ -68,13 +68,8 @@ class GuestService
                 ->where('wedding_id', $weddingId)
                 ->whereNull('main_guest_id')
                 ->with('companion')
-                ->orderBy('surname')
-                ->orderBy('name')
-                ->orderBy('id')])
-            ->orderBy('street')
-            ->orderBy('house_number')
-            ->orderBy('city')
-            ->orderBy('id')
+                ->oldest()])
+            ->oldest()
             ->skip($first)
             ->take($rowsPerPage)
             ->get();
@@ -99,9 +94,7 @@ class GuestService
 
         $data = $query
             ->with(['address', 'companion'])
-            ->orderBy('surname')
-            ->orderBy('name')
-            ->orderBy('id')
+            ->oldest()
             ->skip($first)
             ->take($rowsPerPage)
             ->get();

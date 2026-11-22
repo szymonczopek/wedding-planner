@@ -16,8 +16,6 @@ class Address extends Model
 
     public $incrementing = false;
 
-    public $timestamps = false;
-
     public function guests(): HasMany
     {
         return $this->hasMany(Guest::class, 'address_id');

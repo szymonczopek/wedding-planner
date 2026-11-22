@@ -67,6 +67,9 @@ Table addresses {
   city varchar
   postal_code varchar
   country varchar
+
+  created_at timestamp
+  updated_at timestamp
 }
 
 Table guests {

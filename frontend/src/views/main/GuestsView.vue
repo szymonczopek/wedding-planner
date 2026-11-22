@@ -54,7 +54,7 @@ function formatAddress(address) {
 }
 
 function guestFullName(guest) {
-  return [guest.name, guest.surname].filter(Boolean).join(' ')
+  return [guest.surname, guest.name].filter(Boolean).join(' ')
 }
 
 function flattenAddresses(addresses) {
