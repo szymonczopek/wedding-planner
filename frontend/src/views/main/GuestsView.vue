@@ -7,7 +7,7 @@ import Paginator from 'primevue/paginator'
 import Tag from 'primevue/tag'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Tooltip from 'primevue/tooltip'
-import AddGuestForm from '../../components/forms/AddGuestForm.vue'
+import GuestForm from '../../components/forms/GuestForm.vue'
 import {
   acquaintanceTypes,
   acquaintanceTypeSeverities,
@@ -22,11 +22,12 @@ const {addressesTable, guestsTable} = useGuest()
 
 const vTooltip = Tooltip
 
-const isModalOpen = ref(false)
+const isAddGuestFormOpen = ref(false)
+const isEditGuestFormOpen = ref(false)
 const tableData = ref([])
 const expandedRowGroups = ref([])
 const groupByAddress = ref(true)
-const selectedGuest = ref([]);
+const selectedGuest = ref(null)
 
 const addressPagination = reactive({first: 0, rowsPerPage: 10, total: 0})
 const guestPagination = reactive({first: 0, rowsPerPage: 10, total: 0})
@@ -67,6 +68,7 @@ function flattenAddresses(addresses) {
       const mainRow = {
         ...guest,
         address_id: address.id,
+        guest_address: address,
         flat_address: flatAddress,
         full_name: fullName,
         is_companion: false,
@@ -209,6 +211,22 @@ function onCreated() {
   loadGuests()
 }
 
+async function onUpdated() {
+  selectedGuest.value = null
+  await loadGuests()
+}
+
+function openEditGuest(event) {
+  const guest = event?.data
+
+  if (!guest?.id) {
+    return
+  }
+
+  selectedGuest.value = guest
+  isEditGuestFormOpen.value = true
+}
+
 onMounted(loadGuests)
 </script>
 
@@ -222,12 +240,16 @@ onMounted(loadGuests)
             @update:model-value="onGroupChange"
         />
         <label for="group-by-address">Grupuj po adresach</label>
-        <Button label="Usuń zaznaczenie" v-if="selectedGuest.length > 0" @click="() => {selectedGuest = []}"></Button>
       </div>
-      <Button label="Dodaj gościa" @click="isModalOpen = true"/>
+      <Button label="Dodaj gościa" @click="isAddGuestFormOpen = true"/>
     </div>
 
-    <AddGuestForm v-model:visible="isModalOpen" @created="onCreated"/>
+    <GuestForm v-model:visible="isAddGuestFormOpen" @created="onCreated"/>
+    <GuestForm
+        v-model:visible="isEditGuestFormOpen"
+        :guest="selectedGuest"
+        @updated="onUpdated"
+    />
 
     <div class="mt-6 table">
       <DataTable
@@ -239,9 +261,8 @@ onMounted(loadGuests)
           v-model:expandedRowGroups="expandedRowGroups"
           :expandableRowGroups="groupByAddress"
           row-hover
-          :rowClass="(data) => (data.is_companion ? 'guest-row companion-row' : 'guest-row')"
-          v-model:selection="selectedGuest"
-          selectionMode="multiple"
+          :rowClass="(data) => (data.is_companion ? 'guest-row companion-row cursor-pointer' : 'guest-row cursor-pointer')"
+          @row-click="openEditGuest"
      >
         <Column header="Gość">
           <template #body="{data}">

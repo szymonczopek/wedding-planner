@@ -1,5 +1,5 @@
 <script setup>
-import {computed, reactive, ref, watch} from 'vue'
+import {computed, nextTick, reactive, ref, watch} from 'vue'
 import AutoComplete from 'primevue/autocomplete'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
@@ -16,9 +16,10 @@ import {useGuest} from '../../composables/useGuest.js'
 
 const props = defineProps({
   visible: {type: Boolean, default: false},
+  guest: {type: Object, default: null},
 })
 
-const emit = defineEmits(['update:visible', 'created'])
+const emit = defineEmits(['update:visible', 'created', 'updated'])
 
 const {user} = useAuth()
 const {searchAddresses, searchPolishAddresses, fetchGuestsList} = useGuest()
@@ -55,6 +56,12 @@ const selectedAddressId = computed(() => selectedAddress.value?.id ?? null)
 
 const isGroom = computed(() => selectedWedding.value?.pivot?.role === 'groom')
 
+const isEdit = computed(() => !!props.guest)
+
+const currentAddress = computed(() => props.guest?.address ?? props.guest?.guest_address ?? null)
+
+const isPrefilling = ref(false)
+
 function emptyForm() {
   return {
     name: '',
@@ -79,10 +86,12 @@ function emptyForm() {
 const form = reactive(emptyForm())
 
 const guestOptions = computed(() =>
-    guests.value.map((guest) => ({
-      label: `${guest.name} ${guest.surname}`,
-      value: guest.id,
-    })),
+    guests.value
+      .filter((guest) => guest.id !== props.guest?.id)
+      .map((guest) => ({
+        label: `${guest.name} ${guest.surname}`,
+        value: guest.id,
+      })),
 )
 
 function resetForm() {
@@ -99,6 +108,68 @@ function resetForm() {
   isSearchingPolishAddress.value = false
   lastAddressQuery = ''
   lastPolishAddressQuery = ''
+}
+
+function fillFormFromGuest(guest) {
+  const address = guest.address ?? guest.guest_address ?? null
+
+  isPrefilling.value = true
+  Object.assign(form, {
+    name: guest.name ?? '',
+    surname: guest.surname ?? '',
+    acquaintance_type: guest.acquaintance_type ?? null,
+    child: !!guest.child,
+    guest_side:
+      guest.groom_guest === true
+        ? 'groom'
+        : guest.groom_guest === false
+          ? 'bride'
+          : 'both',
+    diet: guest.diet ?? diets[0]?.value ?? null,
+    main_guest_id: guest.main_guest_id ?? null,
+    address: {
+      street: address?.street ?? '',
+      house_number: address?.house_number ?? '',
+      local_number: address?.local_number ?? '',
+      city: address?.city ?? '',
+      district: address?.district ?? '',
+      postal_code: address?.postal_code ?? '',
+      country: address?.country ?? 'Polska',
+    },
+  })
+  errors.value = {}
+  isSubmitting.value = false
+  isCompanion.value = !!guest.main_guest_id
+  addressMode.value = 'existing'
+  selectedAddress.value = address ? {...address, label: formatAddress(address)} : null
+  addressSuggestions.value = []
+  selectedPolishAddress.value = null
+  polishAddressSuggestions.value = []
+  isSearchingAddress.value = false
+  isSearchingPolishAddress.value = false
+  lastAddressQuery = ''
+  lastPolishAddressQuery = ''
+
+  nextTick(() => {
+    isPrefilling.value = false
+  })
+}
+
+function addressPayload() {
+  return {
+    street: form.address.street || null,
+    house_number: form.address.house_number,
+    local_number: form.address.local_number || null,
+    city: form.address.city,
+    district: form.address.district || null,
+    postal_code: form.address.postal_code || null,
+    country: form.address.country || null,
+  }
+}
+
+function hasAddressFields() {
+  return ['street', 'house_number', 'local_number', 'city', 'district', 'postal_code']
+    .some((field) => (form.address[field] ?? '') !== '')
 }
 
 function formatAddress(address) {
@@ -202,6 +273,26 @@ function selectPolishAddress(event) {
   delete errors.value['address.country']
 }
 
+function selectExistingAddress(event) {
+  const address = event?.value
+
+  if (!address) {
+    return
+  }
+
+  form.address.street = address.street ?? ''
+  form.address.house_number = address.house_number ?? ''
+  form.address.local_number = address.local_number ?? ''
+  form.address.city = address.city ?? ''
+  form.address.district = address.district ?? ''
+  form.address.postal_code = address.postal_code ?? ''
+  form.address.country = address.country ?? 'Polska'
+
+  delete errors.value.address_id
+  delete errors.value['address.house_number']
+  delete errors.value['address.city']
+}
+
 function clearPolishAddress() {
   form.address.street = ''
   form.address.city = ''
@@ -226,7 +317,7 @@ async function submitGuest() {
       errors.value = {main_guest_id: ['Wybierz głównego gościa']}
       return
     }
-  } else if (addressMode.value === 'existing' && !selectedAddressId.value) {
+  } else if (!isEdit.value && addressMode.value === 'existing' && !selectedAddressId.value) {
     errors.value = {address_id: ['Wybierz adres z wyszukiwarki']}
     return
   }
@@ -248,28 +339,39 @@ async function submitGuest() {
       diet: form.diet
     }
 
-    if (form.main_guest_id) {
+    if (isEdit.value) {
+      payload.main_guest_id = form.main_guest_id || null
+    } else if (form.main_guest_id) {
       payload.main_guest_id = form.main_guest_id
     }
 
     if (!isCompanion.value) {
       if (addressMode.value === 'existing') {
-        payload.address_id = selectedAddressId.value
-      } else {
-        payload.address = {
-          street: form.address.street || null,
-          house_number: form.address.house_number,
-          local_number: form.address.local_number || null,
-          city: form.address.city,
-          district: form.address.district || null,
-          postal_code: form.address.postal_code || null,
-          country: form.address.country || null,
+        const selectedId = selectedAddressId.value
+        const currentId = props.guest?.address_id ?? currentAddress.value?.id ?? null
+
+        if (selectedId && selectedId !== currentId) {
+          payload.address_id = selectedId
+        } else if (isEdit.value) {
+          if (hasAddressFields()) {
+            payload.address = addressPayload()
+          }
+        } else if (selectedId) {
+          payload.address_id = selectedId
         }
+      } else {
+        payload.address = addressPayload()
       }
     }
 
-    await api.post('/guests/create', payload)
-    emit('created')
+    if (isEdit.value) {
+      await api.patch(`/guests/${props.guest.id}`, payload)
+      emit('updated')
+    } else {
+      await api.post('/guests/create', payload)
+      emit('created')
+    }
+
     emit('update:visible', false)
     await loadGuests()
   } catch (e) {
@@ -284,6 +386,10 @@ function closeModal() {
 }
 
 watch(isCompanion, (value) => {
+  if (isPrefilling.value) {
+    return
+  }
+
   if (value) {
     form.acquaintance_type = 'plus_one'
     return
@@ -303,7 +409,12 @@ watch(
         return
       }
 
-      resetForm()
+      if (isEdit.value) {
+        fillFormFromGuest(props.guest)
+      } else {
+        resetForm()
+      }
+
       await loadGuests()
     },
 )
@@ -312,7 +423,7 @@ watch(
 <template>
   <Dialog
       :visible="visible"
-      header="Dodaj gościa"
+      :header="isEdit ? 'Edytuj gościa' : 'Dodaj gościa'"
       modal
       :draggable="true"
       :style="{ width: '42rem' }"
@@ -419,6 +530,7 @@ watch(
         </div>
         <div v-if="!isCompanion" class="address-mode">
           4. Adres:
+<!--          <div v-if="!isEdit" class="address-mode-option">-->
           <div class="address-mode-option">
             <RadioButton
                 v-model="addressMode"
@@ -428,6 +540,7 @@ watch(
             />
             <label for="address-mode-existing">Dołącz do zapisanego adresu istniejącego gościa</label>
           </div>
+<!--          <div v-if="!isEdit" class="address-mode-option mb-4">-->
           <div class="address-mode-option mb-4">
             <RadioButton
                 v-model="addressMode"
@@ -456,12 +569,13 @@ watch(
                     :invalid="invalid"
                     fluid
                     @complete="searchAddress"
+                    @option-select="selectExistingAddress"
                 />
               </template>
             </FormField>
           </div>
 
-          <div v-else-if="!isCompanion" class="form-grid">
+          <div v-if="!isCompanion && (addressMode === 'new' || isEdit)" class="form-grid">
             <div class="full-width">
               <FormField
                   id="place-search-query"
@@ -558,7 +672,7 @@ watch(
 
       <div class="modal-actions">
         <Button type="button" label="Anuluj" severity="secondary" text @click="closeModal"/>
-        <Button type="submit" label="Dodaj" :loading="isSubmitting"/>
+        <Button type="submit" :label="isEdit ? 'Zapisz' : 'Dodaj'" :loading="isSubmitting"/>
       </div>
     </form>
   </Dialog>

@@ -6,6 +6,7 @@ use App\DTO\Address\CreateAddressDTO;
 use App\DTO\Guest\CreateGuestDTO;
 use App\Http\Requests\Guest\CreateGuestFormRequest;
 use App\Http\Requests\Guest\ListGuestsFormRequest;
+use App\Http\Requests\Guest\UpdateGuestFormRequest;
 use App\Models\Address;
 use App\Models\Guest;
 use App\Models\Wedding;
@@ -45,6 +46,66 @@ class GuestService
 
             return $guest;
         });
+    }
+
+    public function updateGuest(Guest $guest, UpdateGuestFormRequest $request): Guest
+    {
+        abort_unless($guest->wedding_id === Wedding::selectedWedding(), 403);
+
+        $data = $request->validated();
+
+        return DB::transaction(function () use ($guest, $data) {
+            $guest->fill(array_intersect_key($data, array_flip([
+                'name',
+                'surname',
+                'acquaintance_type',
+                'child',
+                'groom_guest',
+                'diet',
+                'main_guest_id',
+            ])));
+            $guest->save();
+
+//            if (array_key_exists('address_id', $data)) {
+//                $guest->address()->associate($data['address_id']);
+//                $guest->save();
+//            } elseif (array_key_exists('address', $data)) {
+//                $address = $guest->address;
+//
+//                if ($address) {
+//                    $address->update($data['address']);
+//                } else {
+//                    $address = Address::create(CreateAddressDTO::fromRequest($data['address'])->toArray());
+//                    $guest->address()->associate($address);
+//                    $guest->save();
+//                }
+//            }
+            $this->updateGuestAddress($data, $guest);
+
+            return $guest->refresh();
+        });
+    }
+
+    public function updateGuestAddress(array $addressData, Guest $guest)
+    {
+//        print_r($addressData);
+//        die();
+        if (array_key_exists('address_id', $addressData)) {
+            $guest->address()->associate($addressData['address_id']);
+            $guest->save();
+        } elseif (array_key_exists('address', $addressData)) {
+            $address = $guest->address;
+
+            if ($address) {
+                $address->update($addressData['address']);
+            } else {
+                $address = Address::create(CreateAddressDTO::fromRequest($addressData['address'])->toArray());
+                $guest->address()->associate($address);
+                $guest->save();
+            }
+        } elseif (array_key_exists('new_address', $addressData)) {
+
+        }
     }
 
     /**

@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/guest-table', [GuestController::class, 'guestTable']);
         Route::get('/list', [GuestController::class, 'list']);
         Route::post('/create', [GuestController::class, 'create']);
+        Route::patch('/{guest}', [GuestController::class, 'update']);
     });
 
     Route::get('/addresses/search', [AddressController::class, 'search']);

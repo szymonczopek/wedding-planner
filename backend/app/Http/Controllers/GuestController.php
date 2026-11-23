@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Guest\CreateGuestFormRequest;
 use App\Http\Requests\Guest\ListGuestsFormRequest;
+use App\Http\Requests\Guest\UpdateGuestFormRequest;
+use App\Models\Guest;
 use App\Services\Guest\GuestService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
@@ -329,5 +331,41 @@ class GuestController extends Controller
     public function create(CreateGuestFormRequest $request): JsonResponse
     {
         return response()->json($this->guestService->createGuest($request), 201);
+    }
+
+    #[OA\Patch(
+        path: '/api/guests/{guest}',
+        summary: 'Zaktualizuj gościa',
+        security: [['sanctum' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'address_id', type: 'string', format: 'uuid', nullable: true),
+                    new OA\Property(property: 'address', type: 'object', nullable: true),
+                    new OA\Property(property: 'name', type: 'string'),
+                    new OA\Property(property: 'surname', type: 'string'),
+                    new OA\Property(property: 'acquaintance_type', type: 'string'),
+                    new OA\Property(property: 'child', type: 'boolean'),
+                    new OA\Property(property: 'groom_guest', type: 'boolean', nullable: true),
+                    new OA\Property(property: 'diet', type: 'string'),
+                    new OA\Property(property: 'main_guest_id', type: 'string', format: 'uuid', nullable: true),
+                ],
+            ),
+        ),
+        tags: ['Guest'],
+        parameters: [
+            new OA\Parameter(name: 'guest', in: 'path', required: true, schema: new OA\Schema(type: 'string', format: 'uuid')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Zaktualizowano gościa'),
+            new OA\Response(response: 401, description: 'Brak autoryzacji'),
+            new OA\Response(response: 403, description: 'Brak dostępu do wesela'),
+            new OA\Response(response: 422, description: 'Błąd walidacji'),
+        ],
+    )]
+    public function update(UpdateGuestFormRequest $request, Guest $guest): JsonResponse
+    {
+        return response()->json($this->guestService->updateGuest($guest, $request));
     }
 }
