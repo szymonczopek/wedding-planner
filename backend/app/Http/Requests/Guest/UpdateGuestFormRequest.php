@@ -22,7 +22,13 @@ class UpdateGuestFormRequest extends FormRequest
         $guestId = $this->route('guest')?->id;
 
         return [
-            'address_id' => ['sometimes', 'string', 'exists:App\Models\Address,id'],
+            'address_mode' => ['sometimes', Rule::in(['existing', 'new', 'edit'])],
+            'address_id' => [
+                'nullable',
+                'string',
+                'exists:App\Models\Address,id',
+                Rule::requiredIf(fn () => $this->input('address_mode') === 'existing'),
+            ],
             'address' => ['sometimes', 'array'],
             'address.street' => ['nullable', 'string'],
             'address.house_number' => ['required_with:address', 'string'],

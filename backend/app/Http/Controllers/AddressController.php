@@ -25,13 +25,6 @@ class AddressController extends Controller
         tags: ['Address'],
         parameters: [
             new OA\Parameter(
-                name: 'wedding_id',
-                description: 'ID wesela',
-                in: 'query',
-                required: true,
-                schema: new OA\Schema(type: 'string', format: 'uuid'),
-            ),
-            new OA\Parameter(
                 name: 'q',
                 description: 'Miejscowość lub ulica i numer',
                 in: 'query',

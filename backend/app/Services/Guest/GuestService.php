@@ -66,46 +66,67 @@ class GuestService
             ])));
             $guest->save();
 
-//            if (array_key_exists('address_id', $data)) {
-//                $guest->address()->associate($data['address_id']);
-//                $guest->save();
-//            } elseif (array_key_exists('address', $data)) {
-//                $address = $guest->address;
-//
-//                if ($address) {
-//                    $address->update($data['address']);
-//                } else {
-//                    $address = Address::create(CreateAddressDTO::fromRequest($data['address'])->toArray());
-//                    $guest->address()->associate($address);
-//                    $guest->save();
-//                }
-//            }
             $this->updateGuestAddress($data, $guest);
 
             return $guest->refresh();
         });
     }
 
-    public function updateGuestAddress(array $addressData, Guest $guest)
+    public function updateGuestAddress(array $addressData, Guest $guest): void
     {
-//        print_r($addressData);
-//        die();
+        $addressMode = $addressData['address_mode'] ?? null;
+        $hasAddress = array_key_exists('address', $addressData);
+
+        if ($addressMode === 'new' && $hasAddress) {
+            $oldAddress = $guest->address;
+
+            $newAddress = Address::create(CreateAddressDTO::fromRequest($addressData['address'])->toArray());
+            $guest->address()->associate($newAddress);
+            $guest->save();
+
+            if($oldAddress->guests()->doesntExist()) $oldAddress->delete();
+
+            return;
+        }
+
+        if ($addressMode === 'edit' && $hasAddress) {
+            $this->updateOrCreateGuestAddress($guest, $addressData['address']);
+
+            return;
+        }
+
         if (array_key_exists('address_id', $addressData)) {
+            $oldAddress = $guest->address;
+
             $guest->address()->associate($addressData['address_id']);
             $guest->save();
-        } elseif (array_key_exists('address', $addressData)) {
-            $address = $guest->address;
 
-            if ($address) {
-                $address->update($addressData['address']);
-            } else {
-                $address = Address::create(CreateAddressDTO::fromRequest($addressData['address'])->toArray());
-                $guest->address()->associate($address);
-                $guest->save();
-            }
-        } elseif (array_key_exists('new_address', $addressData)) {
+            if($oldAddress->guests()->doesntExist()) $oldAddress->delete();
 
+            return;
         }
+
+        if ($hasAddress) {
+            $this->updateOrCreateGuestAddress($guest, $addressData['address']);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $addressData
+     */
+    private function updateOrCreateGuestAddress(Guest $guest, array $addressData): void
+    {
+        $address = $guest->address;
+
+        if ($address) {
+            $address->update($addressData);
+
+            return;
+        }
+
+        $address = Address::create(CreateAddressDTO::fromRequest($addressData)->toArray());
+        $guest->address()->associate($address);
+        $guest->save();
     }
 
     /**

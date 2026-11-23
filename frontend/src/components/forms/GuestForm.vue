@@ -62,6 +62,32 @@ const currentAddress = computed(() => props.guest?.address ?? props.guest?.guest
 
 const isPrefilling = ref(false)
 
+function emptyAddress() {
+  return {
+    street: '',
+    house_number: '',
+    local_number: '',
+    city: '',
+    district: '',
+    postal_code: '',
+    country: 'Polska',
+  }
+}
+
+function addressFromGuest(guest) {
+  const address = guest?.address ?? guest?.guest_address ?? null
+
+  return {
+    street: address?.street ?? '',
+    house_number: address?.house_number ?? '',
+    local_number: address?.local_number ?? '',
+    city: address?.city ?? '',
+    district: address?.district ?? '',
+    postal_code: address?.postal_code ?? '',
+    country: address?.country ?? 'Polska',
+  }
+}
+
 function emptyForm() {
   return {
     name: '',
@@ -71,15 +97,7 @@ function emptyForm() {
     guest_side: isGroom.value ? 'groom' : 'bride',
     diet: diets[0]?.value ?? null,
     main_guest_id: null,
-    address: {
-      street: '',
-      house_number: '',
-      local_number: '',
-      city: '',
-      district: '',
-      postal_code: '',
-      country: 'Polska',
-    },
+    address: emptyAddress(),
   }
 }
 
@@ -127,20 +145,12 @@ function fillFormFromGuest(guest) {
           : 'both',
     diet: guest.diet ?? diets[0]?.value ?? null,
     main_guest_id: guest.main_guest_id ?? null,
-    address: {
-      street: address?.street ?? '',
-      house_number: address?.house_number ?? '',
-      local_number: address?.local_number ?? '',
-      city: address?.city ?? '',
-      district: address?.district ?? '',
-      postal_code: address?.postal_code ?? '',
-      country: address?.country ?? 'Polska',
-    },
+    address: addressFromGuest(guest),
   })
   errors.value = {}
   isSubmitting.value = false
   isCompanion.value = !!guest.main_guest_id
-  addressMode.value = 'existing'
+  addressMode.value = 'edit'
   selectedAddress.value = address ? {...address, label: formatAddress(address)} : null
   addressSuggestions.value = []
   selectedPolishAddress.value = null
@@ -165,11 +175,6 @@ function addressPayload() {
     postal_code: form.address.postal_code || null,
     country: form.address.country || null,
   }
-}
-
-function hasAddressFields() {
-  return ['street', 'house_number', 'local_number', 'city', 'district', 'postal_code']
-    .some((field) => (form.address[field] ?? '') !== '')
 }
 
 function formatAddress(address) {
@@ -317,7 +322,7 @@ async function submitGuest() {
       errors.value = {main_guest_id: ['Wybierz głównego gościa']}
       return
     }
-  } else if (!isEdit.value && addressMode.value === 'existing' && !selectedAddressId.value) {
+  } else if (addressMode.value === 'existing' && !selectedAddressId.value) {
     errors.value = {address_id: ['Wybierz adres z wyszukiwarki']}
     return
   }
@@ -347,20 +352,17 @@ async function submitGuest() {
 
     if (!isCompanion.value) {
       if (addressMode.value === 'existing') {
-        const selectedId = selectedAddressId.value
-        const currentId = props.guest?.address_id ?? currentAddress.value?.id ?? null
+        payload.address_id = selectedAddressId.value
 
-        if (selectedId && selectedId !== currentId) {
-          payload.address_id = selectedId
-        } else if (isEdit.value) {
-          if (hasAddressFields()) {
-            payload.address = addressPayload()
-          }
-        } else if (selectedId) {
-          payload.address_id = selectedId
+        if (isEdit.value) {
+          payload.address_mode = 'existing'
         }
       } else {
         payload.address = addressPayload()
+
+        if (isEdit.value) {
+          payload.address_mode = addressMode.value
+        }
       }
     }
 
@@ -399,6 +401,28 @@ watch(isCompanion, (value) => {
 
   if (form.acquaintance_type === 'plus_one') {
     form.acquaintance_type = null
+  }
+})
+
+watch(addressMode, (mode) => {
+  if (isPrefilling.value) {
+    return
+  }
+
+  if (mode === 'new') {
+    Object.assign(form.address, emptyAddress())
+    selectedAddress.value = null
+    selectedPolishAddress.value = null
+    addressSuggestions.value = []
+    polishAddressSuggestions.value = []
+    return
+  }
+
+  if (mode === 'edit') {
+    const address = currentAddress.value
+
+    Object.assign(form.address, addressFromGuest(props.guest))
+    selectedAddress.value = address ? {...address, label: formatAddress(address)} : null
   }
 })
 
@@ -509,7 +533,7 @@ watch(
           </div>
         </div>
         <div v-if="isCompanion" class="full-width">
-          4. Czyja osoba towarzysząca?
+          4. Czyja to osoba towarzysząca?
           <div class="mt-4">
             <FormField id="guest-main-guest" label="Gość główny" :error="errors.main_guest_id?.[0]">
               <template #default="{ id, invalid }">
@@ -530,7 +554,6 @@ watch(
         </div>
         <div v-if="!isCompanion" class="address-mode">
           4. Adres:
-<!--          <div v-if="!isEdit" class="address-mode-option">-->
           <div class="address-mode-option">
             <RadioButton
                 v-model="addressMode"
@@ -540,7 +563,15 @@ watch(
             />
             <label for="address-mode-existing">Dołącz do zapisanego adresu istniejącego gościa</label>
           </div>
-<!--          <div v-if="!isEdit" class="address-mode-option mb-4">-->
+          <div v-if='isEdit' class="address-mode-option mb-4">
+            <RadioButton
+                v-model="addressMode"
+                inputId="address-mode-edit"
+                name="address-mode"
+                value="edit"
+            />
+            <label for="address-mode-edit">Edytuj ten adres</label>
+          </div>
           <div class="address-mode-option mb-4">
             <RadioButton
                 v-model="addressMode"
@@ -575,7 +606,7 @@ watch(
             </FormField>
           </div>
 
-          <div v-if="!isCompanion && (addressMode === 'new' || isEdit)" class="form-grid">
+          <div v-if="!isCompanion && (addressMode === 'new' || addressMode === 'edit')" class="form-grid">
             <div class="full-width">
               <FormField
                   id="place-search-query"
